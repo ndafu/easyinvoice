@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{feed_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<h1 class="m-0 text-dark" th:text="#{feed_management}"></h1>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="col-sm-1">
+							<button type="button" class="btn btn-block btn-outline-primary " data-toggle="tooltip" data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+						</div>
+						
+						<div class="col-sm-1">
+							<a  th:href="@{/feedadd}" class="btn btn-block btn-outline-success">
+								<i class="fa fa-plus"></i>
+							</a>	
+						</div>
+				  	</div>
+<!-- 					<div class="col-sm-1"> -->
+<!-- 						<button disabled="disabled" type="submit" class="btn btn-block btn-outline-danger" id="outerfeed"> -->
+<!-- 							<i class="fa fa-sign-out-alt"></i>  -->
+<!-- 						</button> -->
+<!-- 					</div> -->
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-7 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fa fa-seedling mr-1"></i> [[#{stock_feed}]]
+								</h3>
+<!-- 								<div class="card-tools"> -->
+<!-- 									<div class="btn-group col-sm-12"> -->
+<!-- 				                        <input type="text" class="form-control" id="searchprod" th:placeholder="#{provision}" /> -->
+<!-- 				                        <button type="button" class="btn btn-sm btn-default" id="searchprovision" ><i class="fa fa-search"></i></button> -->
+<!-- 				                    </div> -->
+<!-- 								</div> -->
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 10px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered" id="dataTable" >
+											<thead>
+												<tr>
+													<td><strong>#</strong></td>
+													<td><strong th:text="#{code}"></strong></td>
+													<td><strong th:text="#{identification}"></strong></td>
+													<td><strong th:text="#{recorded_by}"></strong></td>
+													<td><strong th:text="#{recorder_on}"></strong></td>
+													<td><strong th:text="#{quantity}"></strong></td>
+													<td><strong th:text="#{rem_qty}"></strong></td>
+													<td><strong th:text="#{unity}"></strong></td>
+													<td><strong th:text="#{comment}"></strong></td>
+													<td><strong>+</strong></td>
+												</tr>
+											</thead>
+											<tbody id="stoutdetails">
+												<tr th:each ="fe:${feeds}" class="feed_row" th:data-ref="${fe.id}" th:data-code="${fe.code}">
+													<td th:text ="${fe.id}"></td>
+													<td th:text ="${fe.code}"></td>
+													<td th:text ="${fe.name}"></td>
+													<td th:text ="${fe.createdBy}"></td>
+													<td th:text ="${#calendars.format(fe.createdOn, 'dd/MM/yyyy HH:mm')}"></td>
+													<td th:text ="${fe.quantity}"></td>
+													<td th:text ="${fe.rem_quantity}"></td>
+													<td th:text ="${fe.unity}"></td>
+													<td th:text ="${fe.comment}"></td>
+														<td>
+															<div class="btn-group">
+									                        <button type="button" class="btn btn-warning" th:data-ref="${fe.id}" th:data-quantity="${fe.quantity}"><i class="fa fa-question"> </i></button>
+									                        <button th:if="${fe.rem_quantity} > 0" type="button" class="btn btn-danger feedout" th:data-ref="${fe.id}" th:data-rem="${fe.rem_quantity}"><i class="fa fa-share-square"></i></button>
+									                    </div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+										<div class="col-sm-3">
+											<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+										</div>
+
+										<div class="col-sm-1">
+											<a th:if="${currentPage > 1}" th:href="@{'/stockout/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+											<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+										</div>
+										
+										<div class="col-sm-1">
+											<a th:if="${currentPage < totalpages}" th:href="@{'/stockout/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+											<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+										</div>
+									</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-5 connectedSortable">
+						<!-- solid sales graph -->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-dolly mr-1"></i> [[#{feed_completion}]]
+								</h3>
+								<div class="card-tools"></div>
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 10px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered" id="dataTable feedtable">
+										<thead>
+											<tr>
+												<td><strong>#</strong></td>
+												<td><strong th:text="#{provision}"></strong></td>
+												<td><strong th:text="#{proportion}"></strong></td>
+											</tr>
+										</thead>
+										<tbody id="detailfeeds">
+										</tbody>
+									</table>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="feedoutout" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset
+											style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<legend
+												style="font-size: 14px; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; background-color: RGB(0, 123, 255); color: white;">
+												<b th:text="#{feed}"></b>
+											</legend>
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="provision" th:text="#{code}"></label> 
+														<input type="text" class="form-control" id="code_feed" th:placeholder="#{code}" readonly="readonly" />
+														<input type= "hidden" id="feedid"/>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="provider" th:text="#{date}"></label> 
+														
+														<input type="text" class="form-control" id="date_feed_rem" th:placeholder="#{date}" th:value="${#calendars.format(#calendars.createNow(), 'dd/MM/yyyy')}" readonly="readonly"/>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="provider" th:text="#{rem_qty}"></label> 
+														<input type="text" class="form-control" id="quantity_feed_rem" th:placeholder="#{rem_qty}" readonly="readonly" />
+
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										
+										<fieldset
+											style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<legend
+												style="font-size: 14px; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; background-color: RGB(0, 123, 255); color: white;">
+												<b th:text="#{fowl}"></b>
+											</legend>
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="provision" th:text="#{generation}"></label> 
+														<select class="form-control" id="fowl_generation">
+															<option></option>
+															<option th:each="fo:${fowls}" th:value="${fo.id}" th:text="${fo.generation}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="provider" th:text="#{hatchdate}"></label> 
+														<input type="text" class="form-control" id="hacked_date" th:placeholder="#{date}" readonly="readonly"/>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="fowl_number" th:text="#{number}"></label> 
+														<input type="text" class="form-control" id="fowl_number" th:placeholder="#{number}" readonly="readonly" />
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset
+											style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<legend
+												style="font-size: 14px; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; background-color: RGB(0, 123, 255); color: white;">
+												<b th:text="#{feed_out}"></b>
+											</legend>
+											<div class="row">
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="out_feed_quantity" th:text="#{days}"></label> 
+														<input type="number" class="form-control" id="days_feed" th:placeholder="#{days}" />
+														<input type="hidden" class="form-control" id="fowl_id"/>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="out_feed_quantity" th:text="#{quantity}"></label> 
+														<input type="number" class="form-control" id="out_feed_quantity" th:placeholder="#{quantity}" readonly="readonly"/>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="provider" th:text="#{comment}"></label> 
+														<textarea class="form-control" id="out_feed_comment" rows="1"></textarea>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button disabled="disabled" type="submit" class="btn btn-primary" id="savefeedout">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsavefeedout">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Edit user -->
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="modalupdatecart" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset
+											style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="provision" th:text="#{provision}"></label> 
+														<input readonly="readonly" type="text" class="form-control" id="upname" th:placeholder="#{provision}" />
+														
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="provider" th:text="#{quantity}"></label> 
+														<input type="text" class="form-control" id="upquantity" th:placeholder="#{quantity}" />
+														<input type= "hidden" id="upid"/>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="savefeedout">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsavefeedout">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End edit user -->
+	</div>
+</body>
+</html>

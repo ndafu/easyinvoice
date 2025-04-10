@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{order_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{order_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" 
+							data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+						</div>
+						
+						<div class="col-sm-2">
+							<a th:href="@{orders}" class="btn btn-block btn-outline-success" 
+								data-toggle="tooltip" data-placement="top" th:title="#{open_order}" id="open_quotations">
+								<i class="fas fa-folder-open"></i>
+							</a>	
+						</div>
+					</div>
+					
+					<div class="col-sm-2">
+						<button type="button" class="btn btn-block btn-outline-success" data-toggle="tooltip" 
+						 	data-placement="top" th:title="#{save_order}" id="save_order">
+							<i class="fa fa-save" aria-hidden="true"></i>
+						</button>	
+					</div>
+					
+	
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-8 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<fieldset style="font-size:small; border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group input-group-sm">
+											<label for="quo_client" th:text="#{order_quotation}"></label> 
+											<select class="form-control form-control-border select2" id="order_quotation">
+												<option></option>
+												<option th:each="quot:${quotations}" th:value="${quot.id}" th:text="${quot.reference+' ['+quot.client.name+']'}"></option>
+											</select>
+										</div>
+									</div>
+									
+									<div class="col-sm-6">
+										<div class="form-group input-group-sm">
+											<label for="quo_date" th:text="#{order_client}"></label> 
+											<input readonly="readonly" type="text" class="form-control form-control-border" id="order_client" th:placeholder="#{order_client}" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group input-group-sm">
+											<label for="quo_address" th:text="#{quo_address}"></label> 
+											<textarea readonly="readonly" class="form-control form-control-border" rows="3" th:placeholder="#{quo_address}" id="quo_address"></textarea>
+										</div>
+									</div>
+									
+									<div class="col-sm-6">
+										<div class="form-group input-group-sm">
+											<label for="quo_destination" th:text="#{quo_destination}"></label> 
+											<textarea readonly="readonly" class="form-control form-control-border" rows="3" th:placeholder="#{quo_destination}" id="quo_destination"></textarea>
+										</div>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-sm-2">
+										<div class="form-group input-group-sm">
+											<label for="quo_taxe" th:text="#{quo_taxe}"></label> 
+<!-- 											<input type="text" th:value="${}"/> -->
+											<select disabled="disabled" class="form-control form-control-border" id="quo_taxe">
+												<option></option>
+												<option th:each="ta:${taxs}" th:value="${ta.id}" th:text="${ta.abbreviation+'['+ta.rate+'%]'}"></option>
+											</select>
+											<input type="hidden" id="tax_rate" />
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group input-group-sm">
+											<label for="quo_date" th:text="#{quo_date}"></label> 
+											<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_date" th:placeholder="#{quo_date}" />
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group input-group-sm">
+											<label for="quo_date" th:text="#{order_date}"></label> 
+											<input readonly="readonly" type="text" class="form-control form-control-border datepicker" id="order_date" th:placeholder="#{quo_date}" />
+										</div>
+									</div>
+									
+									<div class="col-sm-4">
+										<div class="form-group input-group-sm">
+											<label for="quo_date" th:text="#{order_ref}"></label> 
+											<input type="text" class="form-control form-control-border" id="order_ref" th:placeholder="#{order_ref}" style="text-transform:uppercase;"  />
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-4 connectedSortable">
+						<div class="card">
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="form-group input-group-sm row">
+			                    	<label for="quo_sub_tot" class="col-sm-5 col-form-label" th:text="#{quo_sub_tot}"></label>
+			                    	<div class="col-sm-7 input-group-sm">
+			                      		<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_sub_tot" th:placeholder="#{quo_sub_tot}" style="text-align: right;" th:value="${sub}"/>
+			                    	</div>
+			                  	</div>
+			                  	<div class="form-group row">
+			                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_tax}"></label>
+			                    	<div class="col-sm-7 input-group-sm">
+			                      		<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_tax" th:placeholder="#{quo_tax}" style="text-align: right;" th:value="${tax}"/>
+			                    	</div>
+			                  	</div>
+			                  	<div class="form-group row">
+			                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_total}"></label>
+			                    	<div class="col-sm-7 input-group-sm"> 
+			                      		<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_total" th:placeholder="#{quo_total}" style="text-align: right;" th:value="${total}"/>
+			                    	</div>
+			                  	</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group input-group-sm">
+											<label for="quo_comment" th:text="#{quo_comment}"></label> 
+											<textarea readonly="readonly" class="form-control form-control-border" rows="2" th:placeholder="#{quo_comment}" id="quo_comment"></textarea>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-12 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+
+							<fieldset hidden="hidden" id="quo_detail_display" style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered table-hover table-sm" id="dataTable1" width="100%" cellspacing="0" >
+										<thead>
+											<tr>
+												<td><strong th:text="#{quo_qte}"></strong></td>
+												<td><strong th:text="#{quo_art}"></strong></td>
+												<td><strong th:text="#{quo_unity_price}"></strong></td>
+												<td><strong th:text="#{quo_tax}"></strong></td>
+												<td><strong th:text="#{quo_tot_nvat}"></strong></td>
+												<td><strong th:text="#{quo_tax_amnt}"></strong></td>
+												<td><strong th:text="#{quo_tot_wvat}"></strong></td>
+											</tr>
+										</thead>
+										<tbody id="order_detail">
+											
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+<!-- 									<div class="col-sm-3"> -->
+<!-- 										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5> -->
+<!-- 									</div> -->
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<a th:if="${currentPage > 1}" th:href="@{'/clients/' + ${currentPage - 1}}">[[#{PREV}]]</a> -->
+<!-- 										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp; -->
+<!-- 									</div> -->
+									
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<a th:if="${currentPage < totalpages}" th:href="@{'/clients/' + ${currentPage + 1}}">[[#{NEXT}]]</a> -->
+<!-- 										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp; -->
+<!-- 									</div> -->
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="new_client" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-university mr-1"></i> <strong>[[#{add_client}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{cli_name}"></label> 
+														<input autocomplete="off" type="text" class="form-control" id="cli_name" th:placeholder="#{cli_name}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_contact_person" th:text="#{cli_contact_person}"></label> 
+														<input type="text" class="form-control" id="cli_contact_person" th:placeholder="#{cli_contact_person}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="cli_tin" th:text="#{cli_tin}"></label> 
+														<input type="text" class="form-control" id="cli_tin" th:placeholder="#{cli_tin}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_telephon" th:text="#{cli_telephon}"></label> 
+														<input autocomplete="off" type="text" class="form-control" id="cli_telephon" th:placeholder="#{cli_telephon}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_email" th:text="#{cli_email}"></label> 
+														<input autocomplete="off" type="text" class="form-control" id="cli_email" th:placeholder="#{cli_email}" />
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<label for="cli_address" th:text="#{cli_address}"></label> 
+														<textarea rows="3" class="form-control" id="cli_address" th:placeholder="#{cli_address}"></textarea>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+									                        <label for="checkboxDanger1">[[#{vat_sub}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="saveClient">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsaveClient">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1"
+			role="dialog" id="addArticles1" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="name" th:text="#{title}"></label> <input
+															type="text" class="form-control" id="title"
+															th:placeholder="#{title}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{code}"></label> 
+														<input readonly="readonly" type="text" class="form-control" id="code" th:placeholder="#{code}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{unit}"></label> <input
+															type="text" class="form-control" id="unity"
+															th:placeholder="#{unit}" />
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{minstock}"></label> <input
+															type="text" class="form-control" id="minstock"
+															th:placeholder="#{minstock}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="name" th:text="#{comment}"></label> 
+														<textarea rows="5" class="form-control" id="comment"></textarea>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="savecategory">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelcategory">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Edit user -->
+		<div class="modal fade bd-example-modal-lg" tabindex="-1"
+			role="dialog" id="editcategory" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{title}"></label> 
+														<input type="hidden" id="edid"/>
+														<input type = "hidden" id="edid"/>
+														<input type="text" class="form-control" id="edtitle" 
+														th:placeholder="#{title}" />
+													</div>
+												</div>
+												
+											</div>	
+											
+											<div class="row">
+												
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{code}"></label> 
+														<input readonly="readonly"
+															type="text" class="form-control" id="edcode"
+															th:placeholder="#{code}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{unity}"></label> <input
+															type="text" class="form-control" id="edunity"
+															th:placeholder="#{unity}" />
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{minstock}"></label> <input
+															type="text" class="form-control" id="edminstock"
+															th:placeholder="#{minstock}" />
+													</div>
+												</div>
+											</div>
+																					
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="name" th:text="#{comment}"></label> 
+														<textarea rows="5" class="form-control" id="edcomment"></textarea>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="edsavecategory">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="edcancelcategorysave">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End edit user -->
+	</div>
+</body>
+</html>

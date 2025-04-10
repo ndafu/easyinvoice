@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+<head>
+<meta charset="UTF-8" />
+<title>[[#{rec_action_management}]]</title>
+</head>
+<body>
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{rec_action_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+					
+					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER')"> 
+						<button type="button" class="btn btn-block btn-outline-success" data-toggle="tooltip" data-placement="top" th:title="#{add_action}" id="newaction"> 
+							<i class="fas fa-plus"></i> 
+						</button>	
+					</div> 
+	
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable" id="quotation_list">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<strong><i class="fas fa-folder-open mr-1"></i> [[#{list_actions}]]</strong>
+								</h3>
+							</div>
+							<!-- /.card-header -->
+							<fieldset>
+							<div id="test" class="table-responsive"  style="border: 0px solid #ddd !important; xmin-width: 0; padding: 2px; position: relative; border-radius: 4px; padding-left: 2px !important;padding-right: 2px !important; margin: 4px; margin-left: 4px; margin-right: 4px; ">
+								<table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<td><strong th:text="#{invoice}">#</strong></td>
+												<td><strong th:text="#{quo_date}"></strong></td> <!-- Invoice date -->
+<!-- 												<td  sec:authorize="hasAnyRole('ROLE_ADMIN')"><strong th:text="#{quo_expeditaire}"></strong></td> -->
+												<td><strong th:text="#{quo_client}"></strong></td>
+												<td><strong th:text="#{quo_amount}"></strong></td>
+												<td><strong th:text="#{rec_recover}"></strong></td>
+												<td><strong th:text="#{rec_contactPerson}"></strong></td>
+												<td><strong th:text="#{rec_date}"></strong></td>
+												<td><strong th:text="#{rec_type}"></strong></td>
+												<td><strong th:text="#{rec_decision}"></strong></td>
+												<td><strong th:text="#{rec_next_date}"></strong></td>
+<!-- 												<td> type -->
+<!-- 													<span><i class="fa fa-comment" style="font-size:48px;color:red"></i></span> -->
+<!-- 												</td> -->
+												
+												
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each ="art:${actions}" class="art_row" th:data-ref="${art.id}">
+												<td th:text ="${art.debt.invoice.referenceNumber}"></td>
+												<td th:text ="${#calendars.format(art.debt.invoice.invoiceDate, 'dd/MM/yyyy')}"></td>
+												<td th:text ="${art.debt.invoice.client.name}"></td>
+												<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.debt.invoice.totalAmount,3,'WHITESPACE',0,'COMMA')}"></td>
+												
+<!-- 												<td sec:authorize="hasAnyRole('ROLE_ADMIN')" th:text ="${art.order.organisation.name}"></td> -->
+												<td th:text ="${art.whoExecuted}"></td>
+												<td th:text ="${art.contactedPerson}"></td>
+												<td th:text ="${#calendars.format(art.actionDate, 'dd/MM/yyyy')}"></td>
+												<td style = "text-align: center;"> <!-- type -->
+													<span th:if="${art.usedMean==1}" data-toggle="tooltip" data-placement="top" th:title="#{contact_telephone}"><i class='fa fa-phone' style='color: red'></i></span>
+													<span th:if="${art.usedMean==2}" data-toggle="tooltip" data-placement="top" th:title="#{contact_email}"><i class='fa fa-desktop' style='color: green'></i></span>
+													<span th:if="${art.usedMean==3}" data-toggle="tooltip" data-placement="top" th:title="#{contact_letter}"><i class='fa fa-envelope' style='color: red'></i></span>
+													<span th:if="${art.usedMean==4}" data-toggle="tooltip" data-placement="top" th:title="#{contact_face2face}"><i class='fa fa-route' style='color: green'></i></span>
+												</td>
+												<td th:text ="${art.comments}"></td>
+												<td th:text ="${#calendars.format(art.nextAppointment, 'dd/MM/yyyy')}"></td>
+												
+												
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+									<div class="col-sm-3">
+										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+									</div>
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<span th:each="i: ${#numbers.sequence(1, totalpages)}"> -->
+<!-- 											<a th:if="${currentPage !=i}" th:href="@{'/articles/' + ${i}}">[[${i}]]</a> -->
+<!-- 											<span th:unless="${currentPage != i}">[[${i}]]</span>&nbsp;&nbsp; -->
+<!-- 										</span> -->
+<!-- 									</div> -->
+									<div class="col-sm-1">
+										<a th:if="${currentPage > 1}" th:href="@{'/invoices/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage < totalpages}" th:href="@{'/invoices/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="addaction" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-medkit mr-1"></i> <strong>[[#{add_actions}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="rec_invoice" th:text="#{invoice}"></label> 
+														<select class="form-control form-control-border" id="rec_invoice" >
+															<option></option>
+															<option th:each="inv:${invoices}" th:value="${inv.id}" th:text="${inv.invoiceRef+' - '+inv.invoice.client.name}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="rec_client" th:text="#{client_name}"></label> 
+														<input type="text" disabled="disabled" class="form-control form-control-border" id="rec_client" th:placeholder="#{client_name}" />
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="rec_inv_amount" th:text="#{amount}"></label> 
+														<input disabled="disabled" type="number" class="form-control form-control-border" id="rec_inv_amount" th:placeholder="#{amount}" />
+													</div>
+												</div>
+											</div>
+											
+											
+											
+											
+											<div class="row">
+												<div class="col-sm-3">
+													<div class="form-group input-group-sm">
+														<label for="rec_date" th:text="#{rec_date}"></label> 
+														<input type="text" class="form-control form-control-border datepicker" id="rec_date" th:placeholder="#{rec_date}" />
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="rec_means" th:text="#{means}"></label> 
+														<select class="form-control form-control-border" id="rec_means" >
+															<option></option>
+															<option value="1">[[#{telephone}]]</option>
+															<option value="2">[[#{email}]]</option>
+															<option value="3">[[#{leter}]]</option>
+															<option value="4">[[#{face2face}]]</option>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="rec_contactPerson" th:text="#{rec_contactPerson}"></label> 
+														<input type="text" class="form-control form-control-border" id="rec_contactPerson" th:placeholder="#{rec_contactPerson}" />
+													</div>
+												</div>
+											</div>
+											
+											
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="rec_telephone" th:text="#{telephone}"></label> 
+														<input type="text" class="form-control form-control-border" id="rec_telephone" th:placeholder="#{telephone}" />
+													</div>
+												</div>
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="rec_email" th:text="#{client_email}"></label> 
+														<input type="text" class="form-control form-control-border" id="rec_email" th:placeholder="#{client_email}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-3">
+													<div class="form-group input-group-sm">
+														<label for="rec_next" th:text="#{rec_next_date}"></label> 
+														<input type="text" class="form-control form-control-border datepicker" id="rec_next" th:placeholder="#{rec_next_date}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="rec_recover" th:text="#{rec_recover}"></label> 
+														<input type="text" class="form-control form-control-border" id="rec_recover" th:placeholder="#{rec_recover}" />
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="rec_result" th:text="#{result}"></label> 
+														<select class="form-control form-control-border" id="rec_result" >
+															<option></option>
+															<option value="1">[[#{res_positive}]]</option>
+															<option value="2">[[#{res_negative}]]</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<label for="comment" th:text="#{comment}"></label> 
+														<textarea class="form-control form-control-border" rows="3" id="rec_comment" th:placeholder="#{comment}"></textarea>				
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="saverecovery">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsaverecovery">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+		
+	</div>
+	
+</body>
+</html>

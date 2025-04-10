@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{dirorder_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{dirorder_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" 
+							data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+						</div>
+						
+						<div class="col-sm-2">
+							<a th:href="@{invoices}" class="btn btn-block btn-outline-success" 
+								data-toggle="tooltip" data-placement="top" th:title="#{open_invoice}" id="open_invoice">
+								<i class="fas fa-folder-open"></i>
+							</a>	
+						</div>
+					</div>
+					
+					
+					<div class="col-sm-3">
+						<div class="form-group input-group-sm">
+							<label for="quo_taxe" th:text="#{inv_pyt_mod}"></label> 
+							<select class="form-control form-control-border" id="dir_inv_pyt_mod">
+								<option></option>
+								<option value="1" th:text="#{pyt_espece}"></option>
+								<option value="2" th:text="#{pyt_bank}"></option>
+								<option value="3" th:text="#{pyt_credit}"></option>
+								<option value="4" th:text="#{pyt_oth}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<button type="button" class="btn btn-block btn-outline-success" data-toggle="tooltip" 
+						 	data-placement="top" th:title="#{save_invoice}" id="save_exec_invoice">
+							<i class="fa fa-save" aria-hidden="true"></i>
+						</button>	
+					</div>
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-8 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+
+							<!-- /.card-header --> 
+<!-- 							 -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="row">
+									<div class="col-sm-4">
+										<label for="quo_client" th:text="#{quo_client}"></label> 
+										<div class="form-group input-group input-group-sm">
+											<select class="form-control form-control-border" id="quo_client">
+												<option></option>
+												<option th:each="cli:${clients}" th:value="${cli.id}" th:text="${cli.name}"></option>
+											</select>
+										</div>
+									</div>	
+									<div class="col-sm-8">
+										<div class="form-group input-group-sm">
+											<label for="quo_projet" th:text="#{quo_projet}"></label> 
+											<select class="form-control form-control-border" id="quo_projet">
+												<option></option>
+												
+											</select>
+										</div>
+									</div>
+									
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<label for="quo_rubrics" th:text="#{quo_rubrics}"></label> 
+										<div class="form-group input-group input-group-sm">
+											<select class="form-control form-control-border" id="quo_rubrics">
+												<option></option>
+												
+											</select>
+										</div>
+									</div>
+								</div>
+								
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-4 connectedSortable">
+						<div class="card">
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="form-group input-group-sm row">
+			                    	<label for="quo_sub_tot" class="col-sm-5 col-form-label" th:text="#{quo_sub_tot}"></label>
+			                    	<div class="col-sm-7 input-group-sm">
+			                      		<input type="text" class="form-control form-control-border" id="quo_sub_tot" th:placeholder="#{quo_sub_tot}" style="text-align: right;" th:value="${#numbers.formatDecimal(total_wvat,1,'WHITESPACE',0,'COMMA')}"/>
+			                    	</div>
+			                  	</div>
+			                  	
+			                  	
+			                  	<div class="form-group row">
+			                    	<label for="inv_restourne" class="col-sm-5 col-form-label" th:text="#{restourne}"></label>
+			                    	<div class="col-sm-2 input-group-sm">
+			                      		<input type="number" class="form-control form-control-border" id="inv_restourne_pourcentage" th:placeholder="#{inv_restourne_pourcentage}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${restourne}"/>
+			                    	</div>
+			                    	
+			                    	<div class="col-sm-5 input-group-sm">
+			                      		<input readonly="readonly" type="text" class="form-control form-control-border" id="inv_restourne" th:placeholder="#{restourne_amount}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${restourne}"/>
+			                    	</div>
+			                  	</div>
+			                  	
+			                  	<div class="form-group row">
+			                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_tax}"></label>
+			                    	<div class="col-sm-7 input-group-sm">
+			                      		<input type="text" class="form-control form-control-border" id="quo_tax" th:placeholder="#{quo_tax}" style="text-align: right;" th:value="${#numbers.formatDecimal(total_vat,1,'WHITESPACE',0,'COMMA')}"/>
+			                    	</div>
+			                  	</div>
+			                  	<div class="form-group row">
+			                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_total}"></label>
+			                    	<div class="col-sm-7 input-group-sm"> 
+			                      		<input type="text" class="form-control form-control-border" id="quo_total" th:placeholder="#{quo_total}" style="text-align: right;" th:value="${#numbers.formatDecimal(total_vatinc,1,'WHITESPACE',0,'COMMA')}"/>
+			                    	</div>
+			                  	</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-12 connectedSortable">
+						<div class="card">
+							<div class="card-header">
+								<div class="row">
+									<div class="col-sm-4">
+										<label for="quo_rubrics" th:text="#{quo_art}"></label> 
+										<div class="form-group input-group input-group-sm">
+											<select class="form-control form-control-border" id="quo_articles">
+												<option></option>
+												
+											</select>
+										</div>
+									</div>
+									
+									
+									<div class="col-sm-2">
+										<label for="quo_rubrics" th:text="#{quo_qte_total}"></label> 
+										<div class="form-group input-group input-group-sm">
+											<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_qte_total"/>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<label for="quo_rubrics" th:text="#{quo_qte_taken}"></label> 
+										<div class="form-group input-group input-group-sm">
+											<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_qte_taken"/>
+											<input type="hidden" id="qty_rem"/>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<label for="quo_rubrics" th:text="#{quo_takrate}"></label> 
+										<div class="form-group input-group input-group-sm">
+											<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_takrate"/>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<label for="quo_rubrics" th:text="#{quo_remrate}"></label> 
+										<div class="form-group input-group input-group-sm">
+											<input readonly="readonly" type="text" class="form-control form-control-border" id="quo_remrate"/>
+										</div>
+									</div>
+								</div>
+								
+								<hr/>
+								
+								<div class="row">
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="avanc_based">[[#{avanc_based}]]</label> 
+											<div class="form-group input-group-sm">
+												<div class="icheck-danger d-inline" data-toggle="tooltip" data-placement="top" th:title="#{avancement_based}">
+							                        <input type="checkbox" checked="checked" id="avanc_based">
+							                        <label for="avanc_based">&nbsp;</label>
+						                      	</div>
+											</div>
+										</div>
+									</div>
+									
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_qte" th:text="#{quo_qte}"></label> 
+											<input readonly="readonly" type="number" class="form-control form-control-border" th:placeholder="#{quo_qte}" id="quo_quantity"/>
+											<input type="hidden" id="tax_rate"/>
+											<input type="hidden" id="tax_amount"/>
+											<input type="hidden" id="art_rubric_name"/>
+											<input type="hidden" id="art_name"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_act_avan" th:text="#{quo_act_avan}"></label> 
+											<input type="number" class="form-control form-control-border" th:placeholder="#{quo_act_avan}" id="quo_act_avan"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_unity_price" th:text="#{quo_unity_price}"></label> 
+											<input readonly="readonly" type="text" class="form-control form-control-border" th:placeholder="#{quo_unity_price}" id="quo_unity_price"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_tax" th:text="#{quo_unity}"></label> 
+											<input readonly="readonly"  style="text-align: left;" type="text" class="form-control form-control-border" th:placeholder="#{quo_unity}" id="quo_unity"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_tax" th:text="#{quo_tax}">&nbsp;</label> 
+											<input readonly="readonly" style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_tax_rate}" id="quo_tax_rate"/>
+										</div>
+									</div>
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_tax">&nbsp;</label> 
+											<input readonly="readonly" style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_tax_amnt}" id="quo_tax_amnt"/>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group input-group-sm">
+											<label for="quo_art_total" th:text="#{quo_nvat_total}"></label> 
+											<input readonly="readonly" style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_nvat_total}" id="quo_art_total"/>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group input-group-sm">
+											<label for="quo_art_total" th:text="#{quo_vat_total}"></label> 
+											<input readonly="readonly" style="text-align: right;" type="number" class="form-control form-control-border" th:placeholder="#{quo_vat_total}" id="quo_art_vat_total"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_art_total" text=""></label> 
+											<button type="button" class="btn btn-block btn-outline-success" 
+												data-toggle="tooltip" data-placement="top" th:title="#{add_article_quo}" id="add_article_quo">
+												<i class="fa fa-plus"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- /.card-header --> 
+<!-- 							 -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered table-hover table-sm" id="dataTablee" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<td><strong th:text="#{quo_rubrics}"></strong></td>
+												<td><strong th:text="#{quo_art}"></strong></td>
+												<td><strong th:text="#{quo_unity}"></strong></td>
+												<td><strong th:text="#{quo_qte}"></strong></td>
+												<td><strong th:text="#{quo_unity_price}"></strong></td>
+												<td><strong th:text="#{prec_avanc}"></strong></td>
+												<td><strong th:text="#{actu_avanc}"></strong></td>
+												<td><strong th:text="#{quo_tot_nvat}"></strong></td>
+												<td><strong th:text="#{quo_tax_amnt}"></strong></td>
+												<td><strong th:text="#{quo_tot_wvat}"></strong></td>
+												<td><strong th:text="#{invoiced_amount}"></strong></td>
+												<td><strong>+</strong></td>
+											</tr>
+										</thead>
+										<tbody id="quotation_detail">
+											<tr th:each ="quo:${quotations}" class="quo_row" th:data-ref="${quo.id}">
+												<td th:text ="${quo.quantity}"></td>
+												<td th:text ="${quo.title}"></td>
+												<td th:text ="${quo.unity}"></td>
+												<td th:text ="${#numbers.formatDecimal(quo.unity_price,3,'WHITESPACE',0,'COMMA')}"></td>
+												<td style="text-align: right;" th:text ="${#numbers.formatDecimal(quo.totalNVAT,1,'WHITESPACE',0,'COMMA')}"></td> 
+												<td style="text-align: right;" th:text ="${#numbers.formatDecimal(quo.totalVAT,1,'WHITESPACE',0,'COMMA')}"></td>
+												<td style="text-align:right;" th:text ="${#numbers.formatDecimal(quo.totalIncVAT,1,'WHITESPACE',0,'COMMA')}"></td>
+												<td sec:authorize="hasRole('ROLE_ADMIN')">
+													<div class="btn-group">
+								                        <button type="button" class="btn  btn-sm btn-danger updatearticle" th:data-ref="${quo.id}" th:onclick="deleteCartElement([[${quo.id}]])"><i class="fa fa-trash"> </i></button>
+								                    </div>
+												</td>
+											</tr>
+											
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+<!-- 									<div class="col-sm-3"> -->
+<!-- 										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5> -->
+<!-- 									</div> -->
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<a th:if="${currentPage > 1}" th:href="@{'/clients/' + ${currentPage - 1}}">[[#{PREV}]]</a> -->
+<!-- 										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp; -->
+<!-- 									</div> -->
+									
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<a th:if="${currentPage < totalpages}" th:href="@{'/clients/' + ${currentPage + 1}}">[[#{NEXT}]]</a> -->
+<!-- 										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp; -->
+<!-- 									</div> -->
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="new_client" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-university mr-1"></i> <strong>[[#{add_client}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{cli_name}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_name" th:placeholder="#{cli_name}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_contact_person" th:text="#{cli_contact_person}"></label> 
+														<input type="text" class="form-control form-control-border" id="cli_contact_person" th:placeholder="#{cli_contact_person}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="cli_tin" th:text="#{cli_tin}"></label> 
+														<input type="text" class="form-control form-control-border" id="cli_tin" th:placeholder="#{cli_tin}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_telephon" th:text="#{cli_telephon}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_telephon" th:placeholder="#{cli_telephon}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_email" th:text="#{cli_email}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_email" th:placeholder="#{cli_email}" />
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<label for="cli_address" th:text="#{cli_address}"></label> 
+														<textarea rows="3" class="form-control form-control-border" id="cli_address" th:placeholder="#{cli_address}"></textarea>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+									                        <label for="checkboxDanger1">[[#{vat_sub}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="saveCliente">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsaveClient">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1"
+			role="dialog" id="addArticles1" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="name" th:text="#{title}"></label> <input
+															type="text" class="form-control" id="title"
+															th:placeholder="#{title}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{code}"></label> 
+														<input readonly="readonly" type="text" class="form-control" id="code" th:placeholder="#{code}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{unit}"></label> <input
+															type="text" class="form-control" id="unity"
+															th:placeholder="#{unit}" />
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{minstock}"></label> <input
+															type="text" class="form-control" id="minstock"
+															th:placeholder="#{minstock}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="name" th:text="#{comment}"></label> 
+														<textarea rows="5" class="form-control" id="comment"></textarea>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="savecategory">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelcategory">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Edit user -->
+		<div class="modal fade bd-example-modal-lg" tabindex="-1"
+			role="dialog" id="editcategory" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{title}"></label> 
+														<input type="hidden" id="edid"/>
+														<input type = "hidden" id="edid"/>
+														<input type="text" class="form-control" id="edtitle" 
+														th:placeholder="#{title}" />
+													</div>
+												</div>
+												
+											</div>	
+											
+											<div class="row">
+												
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{code}"></label> 
+														<input readonly="readonly"
+															type="text" class="form-control" id="edcode"
+															th:placeholder="#{code}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{unity}"></label> <input
+															type="text" class="form-control" id="edunity"
+															th:placeholder="#{unity}" />
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{minstock}"></label> <input
+															type="text" class="form-control" id="edminstock"
+															th:placeholder="#{minstock}" />
+													</div>
+												</div>
+											</div>
+																					
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="name" th:text="#{comment}"></label> 
+														<textarea rows="5" class="form-control" id="edcomment"></textarea>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="edsavecategory">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="edcancelcategorysave">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End edit user -->
+	</div>
+</body>
+</html>

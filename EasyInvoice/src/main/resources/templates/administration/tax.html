@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{tax_man_page}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<h1 class="m-0 text-dark" th:text="#{tax_man_page}"></h1>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-block btn-outline-primary" onclick="goBack()" 
+								data-toggle="tooltip" data-placement="top" th:title="#{go_back}"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+						</div>
+						
+						<div class="col-sm-2" sec:authorize="hasAnyRole('ROLE_ADMIN')">
+							<button type="button" class="btn btn-block btn-outline-success"  id="addtaxx" 
+								data-toggle="tooltip" data-placement="top" th:title="#{add_tax}">
+								<i class="fa fa-plus"></i>
+							</button>	
+						</div>
+				  	</div>
+				  	
+				  	<form name= "searchdisease" method="post" action="#" th:action="@{/searchdisease}" th:object="${searchexpense}">
+						<div class="input-group input-group-sm">
+							
+							<input autocomplete="off" type="text" class="form-control form-control-border" id="disease_cause_search" 
+								th:placeholder="#{disease_cause}" name="disease_cause_search" data-toggle="tooltip" data-placement="top" th:title="#{disease_cause}"/>
+		                    <div class="input-group-append">
+		                        <span class="input-group-text"><i class="fa fa-bars"></i></span>
+		                    </div>
+							<input autocomplete="off" type="text" class="form-control form-control-border" id="disease_medecin_search" 
+								th:placeholder="#{disease_medecin}" name="disease_medecin_search" data-toggle="tooltip" data-placement="top" th:title="#{disease_medecin}"/>
+		                    <div class="input-group-append">
+		                        <span class="input-group-text"><i class="fa fa-bars"></i></span>
+		                    </div>							
+							<input autocomplete="off" type="text" class="form-control form-control-border" id="disease_name_search" 
+								th:placeholder="#{disease_name}" name="disease_name_search" 
+								data-toggle="tooltip" data-placement="top" th:title="#{disease_name}"/>
+		                    
+		                    <div class="input-group-append">
+		                        <span class="input-group-text"><i class="fa fa-bars"></i></span>
+		                    </div>
+							
+							<div class="input-group-append">
+								<button class="btn bg-success btn-sm" data-toggle="tooltip" data-placement="top" th:title="#{disease_search}" id="disease_search">
+									<i class="fa fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+	
+					<script>
+						function goBack() {	
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fa fa-medkit mr-1"></i> [[#{tax_man_page}]]
+								</h3>
+
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 10px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered table-hover table-sm" id="dataTable" >
+											<thead>
+												<tr>
+ 													<td><strong>#</strong></td> 
+													<td><strong th:text="#{title}"></strong></td>
+													<td><strong th:text="#{abbr}"></strong></td>
+													<td><strong th:text="#{rate}"></strong>
+													<td><strong th:text="#{registrationDate}"></strong>
+													<td><strong th:text="#{lastUpdateDate}"></strong>
+													<td><strong th:text="#{status}"></strong>
+													<td><strong th:text="#{comment}"></strong></td>
+													<td sec:authorize="hasAnyRole('ROLE_ADMIN')"><strong>+</strong></td>
+												</tr>
+											</thead>
+											<tbody id="stoutdetails">
+												<tr th:each ="ta:${taxes}" class="tax_row" th:data-ref="${ta.id}">
+ 													<td th:text ="${ta.id}"></td>
+													<td th:text ="${ta.title}"></td>
+													<td th:text ="${ta.abbreviation}"></td>
+													<td th:text ="${ta.rate}"></td>
+													<td th:text ="${#calendars.format(ta.registrationDate, 'dd/MM/yyyy hh:mm:ss')}"></td>
+													<td th:text ="${#calendars.format(ta.lastUpdate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+													<td>
+														<span th:if="${ta.status}">[[#{active}]]</span>
+														<span th:unless="${ta.status}">[[#{no_active}]]</span>
+													</td>
+													<td th:text ="${ta.comment}"></td>
+													<td sec:authorize="hasAnyRole('ROLE_ADMIN')">
+														<div class="btn-group">
+									                        <button type="button" class="btn btn-warning edit_disease" th:data-ref="${ta.id}" data-toggle="tooltip" data-placement="top" th:title="#{edit_tax}"><i class="fa fa-edit"> </i></button>
+									                    </div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+										<div class="col-sm-3">
+											<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+										</div>
+
+										<div class="col-sm-1">
+											<a th:if="${currentPage > 1}" th:href="@{'/taxs/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+											<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+										</div>
+										
+										<div class="col-sm-1">
+											<a th:if="${currentPage < totalpages}" th:href="@{'/taxs/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+											<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+										</div>
+									</div>
+							</fieldset>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="addtax" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-medkit mr-1"></i> <strong>[[#{add_tax}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{title}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="tax_title" th:placeholder="#{title}" />
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="tax_abbr" th:text="#{abbr}"></label> 
+														<input type="text" class="form-control form-control-border" id="tax_abbr" th:placeholder="#{abbr}" />
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="tax_rate" th:text="#{rate}"></label> 
+														<input autocomplete="off" type="number" class="form-control form-control-border" id="tax_rate" th:placeholder="#{rate}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<label for="comment" th:text="#{comment}"></label> 
+														<textarea class="form-control form-control-border" rows="3" id="tax_comment" th:placeholder="#{comment}"></textarea>				
+													</div>
+												</div>
+											</div>
+											<div class="row">
+											
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+									                        <label for="checkboxDanger1">[[#{status}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											
+												<div class="form-group clearfix">
+							                    	
+							                    </div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="savetax">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsavetax">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="editdiseasemod" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-medkit mr-1"></i> <strong>[[#{edit_disease}]]</strong> 
+									</h3>
+									<div class="card-tools">
+										
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset
+											style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="generation" th:text="#{generation}"></label> 
+														<input type="hidden" id="ed_id" />
+														<select class="form-control" id="ed_fowl_id">
+															<option></option>
+															<option th:each="fo:${fowls}" th:text="${fo.generation}" th:value="${fo.id}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="disease_name" th:text="#{disease_name}"></label> 
+														<input type="text" class="form-control" id="ed_disease_name" th:placeholder="#{disease_name}" />
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="disease_start_date" th:text="#{disease_date_start}"></label> 
+														<input readonly="readonly" autocomplete="off" type="text" class="form-control datepicker" id="ed_disease_start_date" th:placeholder="#{disease_date_start}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="medecine" th:text="#{disease_medecin}"></label> 
+														<input type="text" class="form-control" id="ed_disease_medecine" th:placeholder="#{disease_medecin}" />					
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="disease_date_end" th:text="#{disease_date_end}"></label> 
+														<input readonly="readonly" autocomplete="off" type="text" class="form-control datepicker" id="ed_disease_date_end" th:placeholder="#{disease_date_end}" />				
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="cause" th:text="#{symptoms}"></label> 
+														<textarea rows="3" class="form-control" id="ed_disease_symptoms" th:placeholder="#{symptoms}"></textarea>					
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="cause" th:text="#{disease_cause}"></label> 
+														<textarea rows="3" class="form-control" id="ed_disease_cause" th:placeholder="#{disease_cause}"></textarea>					
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="comment" th:text="#{comment}"></label> 
+														<textarea rows="3" class="form-control" id="ed_disease_comment" th:placeholder="#{comment}"></textarea>					
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="ed_savedisease">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="ed_cancelsavedisease">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

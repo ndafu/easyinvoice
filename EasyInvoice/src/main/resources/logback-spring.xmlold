@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <springProfile name="default">
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+<!--         <root level="INFO"> -->
+<!--             <appender-ref ref="CONSOLE"/> -->
+<!--         </root> -->
+<!--         <root level="DEBUG"> -->
+<!--             <appender-ref ref="CONSOLE"/> -->
+<!--         </root> -->
+<!--         <root level="WARNING"> -->
+<!--             <appender-ref ref="CONSOLE"/> -->
+<!--         </root> -->
+    </springProfile>
+
+    <springProfile name="default">
+        <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        	<file>/home/ndayizeye/logs/easyinvoice-logger.log</file>  
+<!--             <file>C:\\tmp/logs/ws-logger.log</file> -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>/home/ndayizeye/logs/archived/easyinvoice-logger.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <!-- each archived file, size max 10MB -->
+                <maxFileSize>10MB</maxFileSize>
+                <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+                <totalSizeCap>20GB</totalSizeCap>
+                <!-- 30 days to keep -->
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %p [%t] %c{1.} > %m%n</pattern>
+            </encoder>
+        </appender>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="com.digital.tech.runday" level="DEBUG"/>
+        <logger name="com.digital.tech.runday" level="WARNING"/>
+        <logger name="com.digital.tech.runday" level="ERROR"/>
+        <root level="ERROR">
+           <appender-ref ref="FILE-ROLLING"/>
+        </root>
+    </springProfile>
+    
+     <springProfile name="dev">
+
+        <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!--         	<file>/home/easyrouting/logs/ws-logger.log</file>   -->
+            <file>C:\\tmp/logs/ws-logger.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>/home/easyrouting/logs/archived/ws-logger.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <!-- each archived file, size max 10MB -->
+                <maxFileSize>10MB</maxFileSize>
+                <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+                <totalSizeCap>20GB</totalSizeCap>
+                <!-- 30 days to keep -->
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %p [%t] %c{1.} > %m%n</pattern>
+            </encoder>
+        </appender>
+        <logger name="org.springframework" level="ERROR"/>
+        <logger name="tech.ditalspace.HMKInterface" level="DEBUG"/>
+        <root level="ERROR">
+            <appender-ref ref="FILE-ROLLING"/>
+        </root>
+    </springProfile>
+
+</configuration>

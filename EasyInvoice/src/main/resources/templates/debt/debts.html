@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+<head>
+<meta charset="UTF-8" />
+<title>[[#{debts_management}]]</title>
+</head>
+<body>
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{debts_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+					
+<!-- 					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER')">  -->
+<!-- 						<a href="/invoice" th:href="@{invoice}" type="button" class="btn btn-block btn-outline-success"   -->
+<!-- 							data-toggle="tooltip" data-placement="top" th:title="#{add_invoice}">  -->
+<!-- 							<i class="fas fa-plus"></i>  -->
+<!-- 						</a>	 -->
+<!-- 					</div>  -->
+	
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+				
+				<div class="row">
+					<div class="col-md-3 col-sm-6 col-12">
+		            	<div class="info-box">
+							<span class="info-box-icon bg-info"><i class="fa fa-percent"></i></span>
+		
+							<div class="info-box-content">
+								<span class="info-box-text"><strong>[[#{rec_glo_rates}]]</strong></span>
+								<span class="info-box-number">[[${rec_glo_rates+' %'}]]</span>
+							</div>
+		            	</div>
+					</div>
+					
+					<div class="col-md-3 col-sm-6 col-12">
+		            	<div class="info-box">
+		              		<span class="info-box-icon bg-warning"><i class="far fa-copy"></i></span>
+		
+		             		<div class="info-box-content">
+		                		<span class="info-box-text"><strong>[[#{rec_glo_amount}]]</strong></span>
+		                		<span class="info-box-number">[[${#numbers.formatInteger(rec_glo_amount,3,'WHITESPACE')+' BIF'}]]</span>
+		              		</div>
+		              		<!-- /.info-box-content -->
+		            	</div>
+		            	<!-- /.info-box -->
+		          	</div>
+         			<!-- /.col -->
+          			<div class="col-md-3 col-sm-6 col-12">
+            			<div class="info-box">
+              				<span class="info-box-icon bg-success"><i class="far fa-handshake"></i></span>
+
+              				<div class="info-box-content">
+                				<span class="info-box-text"><strong>[[#{rec_glo_paid}]]</strong></span>
+                				<span class="info-box-number">[[${#numbers.formatInteger(rec_glo_paid,3,'WHITESPACE')+' BIF'}]]</span>
+              				</div>
+              				<!-- /.info-box-content -->
+            			</div>
+            			<!-- /.info-box -->
+          			</div>
+          			<!-- /.col -->
+		          	
+          			<!-- /.col -->
+          			<div class="col-md-3 col-sm-6 col-12">
+            			<div class="info-box">
+              				<span class="info-box-icon bg-danger"><i class="far fa-gem"></i></span>
+
+              				<div class="info-box-content">
+                				<span class="info-box-text"><strong>[[#{rec_glo_recover}]]</strong></span>
+                				<span class="info-box-number">[[${#numbers.formatInteger(rec_glo_recover,3,'WHITESPACE')+' BIF'}]]</span>
+              				</div>
+              				<!-- /.info-box-content -->
+            			</div>
+            			<!-- /.info-box -->
+         			 </div>
+         			 <!-- /.col -->
+        		</div>
+        		
+        		
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable" id="quotation_list">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<strong><i class="fas fa-folder-open mr-1"></i> [[#{list_debt}]]</strong>
+								</h3>
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="padding: 5px;">
+							
+							<div class="row">
+				
+<!-- 					<div th:each ="com:${organisations}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column"> -->
+				
+				          		<div th:each ="debt:${debtss}" class="col-md-3 col-sm-6 col-12">
+				            		<div th:if="${debt.ration > 90}" class="info-box bg-success">
+				              			<span class="info-box-icon">
+				              				<i class="far fa-thumbs-up"></i>
+				              			</span>
+				              			<div class="info-box-content">
+					                		<span class="info-box-text"><strong>[[${debt.name}]]</strong></span>
+					                		<span class="info-box-number">[[${#numbers.formatInteger(debt.debtAmount,3,'WHITESPACE')+' BIF'}]]</span>
+							                <div class="progress">
+							                  	<div class="progress-bar" th:style="'width:'+${debt.ration}+'%'"></div>
+							                </div>
+					                		<span class="progress-description">
+					                  			[[${#numbers.formatInteger(debt.paidAmount,1,'WHITESPACE')+' BIF, '+debt.ration+'%'}]]
+					               			</span>
+				              			</div>
+				              			<!-- /.info-box-content -->
+				              			<a th:href="@{'/checkClient/' + ${debt.id}}" type="button" class="btn btn-success" th:data-ref="${debt.id}" data-toggle="tooltip" data-placement="top" th:title="#{debt_detail}">
+											<i class="fas fa-arrow-circle-right"></i>
+										</a>
+				            		</div>
+				            		
+				            		<div th:if="${debt.ration > 50 && debt.ration < 90}" class="info-box bg-warning">
+				              			<span class="info-box-icon">
+				              				<i class="far fa-thumbs-up"></i>
+				              			</span>
+				              			<div class="info-box-content">
+					                		<span class="info-box-text"><strong>[[${debt.name}]]</strong></span>
+					                		<span class="info-box-number">[[${#numbers.formatInteger(debt.debtAmount,3,'WHITESPACE')+' BIF'}]]</span>
+							                <div class="progress">
+							                  	<div class="progress-bar" th:style="'width:'+${debt.ration}+'%'"></div>
+							                </div>
+					                		<span class="progress-description">
+					                  			[[${#numbers.formatInteger(debt.paidAmount,1,'WHITESPACE')+' BIF, '+debt.ration+'%'}]]
+					               			</span>
+					               			
+				              			</div>
+				              			
+				              			<!-- /.info-box-content -->
+				              			<a th:href="@{'/checkClient/' + ${debt.id}}" type="button" class="btn btn-warning" th:data-ref="${debt.id}" data-toggle="tooltip" data-placement="top" th:title="#{debt_detail}">
+											<i class="fas fa-arrow-circle-right"></i>
+										</a>
+				            		</div>
+				            		
+				            		<div th:if="${debt.ration < 50}" class="info-box bg-danger">
+				              			<span class="info-box-icon">
+				              				<i class="far fa-thumbs-down"></i>
+				              			</span>
+				              			<div class="info-box-content">
+					                		<span class="info-box-text"><strong>[[${debt.name}]]</strong></span>
+					                		<span class="info-box-number">[[${#numbers.formatInteger(debt.debtAmount,1,'WHITESPACE')+' BIF'}]]</span>
+							                <div class="progress">
+							                  	<div class="progress-bar" th:style="'width:'+${debt.ration}+'%'"></div>
+							                </div>
+					                		<span class="progress-description">
+					                			[[${#numbers.formatInteger(debt.paidAmount,1,'WHITESPACE')+' BIF, '+debt.ration+'%'}]]
+					               			</span>
+				              			</div>
+				              			<!-- /.info-box-content -->
+				              			<a th:href="@{'/checkClient/' + ${debt.id}}" type="button" class="btn btn-danger" th:data-ref="${debt.id}" data-toggle="tooltip" data-placement="top" th:title="#{debt_detail}">
+											<i class="fas fa-arrow-circle-right"></i>
+										</a>
+				            		</div>
+				            	<!-- /.info-box -->
+				          		</div>
+			          			<!-- /.col -->
+							</div>
+							
+<!-- --> 							
+<!-- 								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers"> -->
+<!-- 									<div class="col-sm-3"> -->
+<!-- 										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5> -->
+<!-- 									</div> -->
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<a th:if="${currentPage > 1}" th:href="@{'/invoices/' + ${currentPage - 1}}">[[#{PREV}]]</a> -->
+<!-- 										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp; -->
+<!-- 									</div> -->
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<a th:if="${currentPage < totalpages}" th:href="@{'/invoices/' + ${currentPage + 1}}">[[#{NEXT}]]</a> -->
+<!-- 										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp; -->
+<!-- 									</div> -->
+<!-- 								</div> -->
+							</fieldset>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+	</div>
+	
+</body>
+</html>

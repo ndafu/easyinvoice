@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<head></head>
+	<body>
+		<aside class="main-sidebar sidebar-dark-primary elevation-4">
+			<!-- Brand Logo -->
+			<a th:href="@{/}" class="brand-link">
+				<img th:src="@{/img/easyinvoice.png}" alt="Easyinvoice Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+				<span class="brand-text font-weight-light" style="font-weight: bold;">[[#{app_name}]]</span>
+			</a>
+			<!-- Sidebar -->
+			<div class="sidebar">
+				<!-- SidebarSearch Form -->
+<!--		     	<div class="form-inline" style="margin-top: 2px;">-->
+		       		
+<!--		       		<div class="input-group input-group-sm"  data-widget="sidebar-search">-->
+<!--		         		<input autocomplete="false" class="form-control form-control-sidebar " type="search" th:placeholder="#{search}" aria-label="Search">-->
+<!--		         		<div class="input-group-append">-->
+<!--		           			<button class="btn btn-sidebar">-->
+<!--		             			<i class="fas fa-search fa-fw"></i>-->
+<!--		           			</button>-->
+<!--		         		</div>-->
+<!--		       		</div>  -->
+<!--		     	</div>-->
+				<!-- Sidebar Menu -->
+     			<nav class="mt-2">
+       				<ul class="nav nav-pills nav-sidebar flex-column nav-child-indent nav-flat" data-widget="treeview" role="menu" data-accordion="false">
+         				<!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+         				<li class="nav-item" sec:authorize="hasAnyRole('ADMIN','ROLE_COM_MANAGER')">
+				            <a th:href="@{/dashboard}" class="nav-link">
+				              	<i class="nav-icon fas fa-tachometer-alt"></i>
+				              	<p>[[#{dashboard}]]</p>
+				            </a>
+				        </li>
+         				
+         				<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN')" class="nav-item">
+				            <a href="#" class="nav-link">
+								<i class="nav-icon fas fa-copy"></i>
+					            <p>[[#{administration}]]
+					            	<i class="fas fa-angle-left right"></i>
+								</p>
+				            </a>
+				            <ul class="nav nav-treeview">
+								<li sec:authorize="hasAnyRole('ROLE_ADMIN')" class="nav-item">
+					                <a th:href="@{/myCompany}" class="nav-link">
+					                	<i class="fa fa-university nav-icon"></i>
+					                	<p>[[#{company}]]</p>
+					                </a>
+				             	</li>
+				              	<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HR_OFF','ROLE_COM_HEAD_ADMIN')" class="nav-item">
+				                	<a th:href="@{/users}" class="nav-link">
+				                  		<i class="fa fa-users nav-icon"></i>
+				                  		<p>[[#{users}]]</p>
+				                	</a>
+				              	</li>
+				              	<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN')" class="nav-item">
+					                <a th:href="@{/clients}" class="nav-link">
+					                	<i class="fa fa-university nav-icon"></i>
+					                	<p>[[#{clients}]]</p>
+					                </a>
+				             	</li>
+				              	<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN')" class="nav-item">
+				                	<a th:href="@{/article}" class="nav-link">
+				                  		<i class="far fa-folder-open mr-1 nav-icon"></i>
+				                  		<p>[[#{article}]]</p>
+				                	</a>
+				              	</li>
+				              	
+				              	<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN')" class="nav-item">
+				                	<a th:href="@{/taxs}" class="nav-link">
+				                  		<i class="far fa-folder-open mr-1 nav-icon"></i>
+				                  		<p>[[#{taxes}]]</p>
+				                	</a>
+				              	</li>
+				            </ul>
+						</li>
+					<li class="nav-item">
+						<a href="#" class="nav-link"> 
+							<i class="nav-icon fa fa-handshake"></i>
+							<p>
+								[[#{order_exec}]] 
+								<i class="fas fa-angle-left right"></i>
+							</p>
+						</a>
+						<ul class="nav nav-treeview">
+							<li sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+								<a th:href="@{/orderExec}" class="nav-link"> 
+									<i class="fa fa-cog nav-icon"></i>
+									<p>[[#{new_order_exec}]]</p>
+								</a>
+							</li>
+							<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+								<a th:href="@{/ordersExec}" class="nav-link"> <i
+									class="fa fa-cogs nav-icon"></i>
+									<p>[[#{list_order_exec}]]</p>
+							</a></li>
+						</ul>
+					</li>	
+						
+						
+					<li class="nav-item"><a href="#" class="nav-link"> 
+						<i class="nav-icon fas fa-copy"></i>
+						<p>
+							[[#{invoicing}]] 
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+						<ul class="nav nav-treeview">
+<!-- 							<li class="nav-item"> -->
+<!-- 								<a href="#" class="nav-link">  -->
+<!-- 									<i class="fa fa-file-invoice nav-icon"></i> -->
+<!-- 									<p> -->
+<!-- 										[[#{quotation}]] <i class="fas fa-angle-left right"></i> -->
+<!-- 									</p> -->
+<!-- 								</a> -->
+<!-- 								<ul class="nav nav-treeview"> -->
+<!-- 									<li sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item"> -->
+<!-- 										<a th:href="@{/quotation}" class="nav-link"> -->
+<!-- 						                	<i class="fa fa-plus fa-3x nav-icon"></i> -->
+<!-- 						                	<p>[[#{new}]]</p> -->
+<!-- 						                </a> -->
+<!-- 									</li> -->
+<!-- 									<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item"> -->
+<!-- 										<a th:href="@{/quotations}" class="nav-link"> -->
+<!-- 						                	<i class="fa fa-list nav-icon"></i> -->
+<!-- 						                	<p>[[#{list}]]</p> -->
+<!-- 						                </a> -->
+<!-- 									</li> -->
+<!-- 								</ul> -->
+<!-- 							</li> -->
+<!-- 							<li class="nav-item"> -->
+<!-- 								<a href="#" class="nav-link">  -->
+<!-- 									<i class="fa fa-shopping-cart nav-icon"></i> -->
+<!-- 									<p> -->
+<!-- 										[[#{order}]] <i class="fas fa-angle-left right"></i> -->
+<!-- 									</p> -->
+<!-- 								</a> -->
+<!-- 								<ul class="nav nav-treeview"> -->
+<!-- 									<li sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item"> -->
+<!-- 										<a th:href="@{/order}" class="nav-link">  -->
+<!-- 											<i class="fa fa-plus nav-icon"></i> -->
+<!-- 											<p>[[#{new}]]</p> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 									<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item"> -->
+<!-- 										<a th:href="@{/orders}" class="nav-link"> <i -->
+<!-- 											class="fa fa-list nav-icon"></i> -->
+<!-- 											<p>[[#{list}]]</p> -->
+<!-- 									</a></li> -->
+<!-- 								</ul> -->
+<!-- 							</li> -->
+							
+<!-- 							<li class="nav-item"> -->
+<!-- 								<a href="#" class="nav-link">  -->
+<!-- 									<i class="fa fa-cog nav-icon"></i> -->
+<!-- 									<p> -->
+<!-- 										[[#{order_exec}]] <i class="fas fa-angle-left right"></i> -->
+<!-- 									</p> -->
+<!-- 								</a> -->
+<!-- 								<ul class="nav nav-treeview"> -->
+<!-- 									<li sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item"> -->
+<!-- 										<a th:href="@{/orderExec}" class="nav-link">  -->
+<!-- 											<i class="fa fa-plus nav-icon"></i> -->
+<!-- 											<p>[[#{new_order_exec}]]</p> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 									<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item"> -->
+<!-- 										<a th:href="@{/ordersExec}" class="nav-link"> <i -->
+<!-- 											class="fa fa-list nav-icon"></i> -->
+<!-- 											<p>[[#{list_order_exec}]]</p> -->
+<!-- 									</a></li> -->
+<!-- 								</ul> -->
+<!-- 							</li> -->
+							
+							<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+								<a href="#" class="nav-link"> 
+									<i class="fa fa-file nav-icon"></i>
+									<p>
+										[[#{invoice}]] <i class="fas fa-angle-left right"></i>
+									</p>
+								</a>
+								<ul class="nav nav-treeview">
+									<li sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+										<a th:href="@{/invoice}" class="nav-link"> 
+											<i class="fa fa-plus nav-icon"></i>
+											<p>[[#{new_simplified}]]</p>
+										</a>
+									</li>
+									<li sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+										<a th:href="@{/invoiceExec}" class="nav-link"> 
+											<i class="fa fa-cog nav-icon"></i>
+											<p>[[#{workExInvoice}]]</p>
+										</a>
+									</li>
+									<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+										<a th:href="@{/invoices}" class="nav-link"> 
+										<i class="fa fa-list nav-icon"></i>
+											<p>[[#{list_invoices}]]</p>
+									</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						</li>	
+						
+						<li class="nav-item">
+							<a href="#" class="nav-link"> 
+								<i class="nav-icon fas fa-undo"></i>
+								<p> [[#{debt_reco}]]<i class="fas fa-angle-left right"></i></p>
+							</a>
+							<ul class="nav nav-treeview">
+								<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+									<a th:href="@{/debts}" class="nav-link"> 
+										<i class="fa fa-tags nav-icon"></i>
+										<p>[[#{debt}]]</p>
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="#" class="nav-link"> 
+										<i class="nav-icon fas fa-eye"></i>
+										<p> [[#{debt_follow}]]<i class="fas fa-angle-left right"></i></p>
+									</a>
+									<ul class="nav nav-treeview">
+										<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+											<a th:href="@{/actions}" class="nav-link"> 
+												<i class="fa fa-tasks nav-icon"></i>
+												<p>[[#{actions}]]</p>
+											</a>
+										</li>
+										<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER','ROLE_COM_HEAD_FINA','ROLE_COM_CASH')" class="nav-item">
+											<a th:href="@{/payments}" class="nav-link"> <i
+												class="fa  fa-handshake nav-icon"></i>
+												<p>[[#{payment}]]</p>
+											</a>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>					
+					</ul>
+     			</nav>
+		     <!-- /.sidebar-menu -->
+			</div>
+			<!-- /.sidebar -->
+		</aside>
+	</body>
+</html>

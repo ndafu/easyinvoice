@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{ordersexec_man_add}]]</title>
+<style type="text/css">
+	input {
+		font-size: xx-small;
+	}
+</style>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{ordersexec_man_add}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content" style="font-size: smaller;">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" 
+							data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+						</div>
+						
+						<div class="col-sm-2">
+							<a th:href="@{/ordersExec}" class="btn btn-block btn-outline-success" 
+								data-toggle="tooltip" data-placement="top" th:title="#{open_works_exec}">
+								<i class="fas fa-folder-open"></i>
+							</a>	
+						</div>
+					</div>
+					
+					<div class="col-sm-2" id="cli_save_btn" hidden="hidden">
+						<button type="button" class="btn btn-block btn-outline-success" data-toggle="tooltip" 
+						 	data-placement="top" th:title="#{save_invoice}" id="save_invoice">
+							<i class="fa fa-save" aria-hidden="true"></i>
+						</button>	
+					</div>
+					
+					<div class="col-sm-2" id="dir_cli_save_btn">
+						<button type="button" class="btn btn-block btn-outline-danger" data-toggle="tooltip" 
+						 	data-placement="top" th:title="#{save_exec}" id="exec_save">
+							<i class="fa fa-save" aria-hidden="true"></i>
+						</button>	
+					</div>
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">				
+					<!-- Left col -->
+					<section class="col-lg-9 connectedSortable" id="select_typ">
+						<!-- Custom tabs (Charts with tabs)-->
+						<fieldset id="bill_type" style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 20px; background-color: white; margin-top:0 px; margin-left: -10px;">
+							<legend style="font-size: medium; margin: 10px; font-weight: bold; font-style: oblique; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; background-color: white; ">[[#{ex_informations}]]</legend>
+							<div class="row" id="inv_order_direct">
+								<div class="col-5 col-sm-2">
+									<div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+										<a class="nav-link active" id="pro_gen_info-tab" data-toggle="pill" href="#pro_gen_info" role="tab" aria-controls="pro_type" aria-selected="false"><strong>[[#{gen_info}]]</strong></a>
+										<a class="nav-link " id="pro_type-tab" data-toggle="pill" href="#pro_type" role="tab" aria-controls="pro_type" aria-selected="true"><strong>[[#{work_section}]]</strong></a>
+										<a class="nav-link" id="pro_article-tab" data-toggle="pill" href="#pro_article" role="tab" aria-controls="pro_article" aria-selected="false"><strong>[[#{works}]]</strong></a>
+									</div>
+								</div>
+								<div class="col-7 col-sm-10">
+									<div class="tab-content" id="vert-tabs-tabContent">
+										
+										<div class="tab-pane fade show active" id="pro_gen_info" role="tabpanel" aria-labelledby="pro_gen_info-tab">
+											<div class="card">
+												<div class="card-body">
+													<div class="tab-content">
+														<div class="active tab-pane" id="invoice">
+														<!-- Post -->
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group input-group-sm">
+																		<label for="exec_nature" th:text = "#{exec_nature}" data-toggle="tooltip" data-placement="top" th:title="#{exec_nature}" ></label>
+																		<input type="text" id="exec_natur" class="form-control form-control-border" th:value="${typesession}"/> 
+																	</div>
+																</div>
+															</div>
+															
+															<div class="row">
+																<div class="col-sm-6">
+																	<label for="quo_client" th:text="#{quo_client}"></label> 
+																	<div class="form-group input-group input-group-sm">
+																		<select class="form-control form-control-border" id="exec_client">
+																			<option></option>
+																			<option th:each="cli:${clients}" th:value="${cli.id}" th:text="${cli.name}" th:if="${clientsession == cli.id}" selected="selected"></option>
+																			<option th:each="cli:${clients}" th:value="${cli.id}" th:text="${cli.name}" th:unless="${clientsession == cli.id}"></option>
+																		</select>
+																		<div class="input-group-append">
+													                        <button type="button" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" th:title="#{inv_add_client}" id="add_client" >
+																				<i class="fa fa-user-plus"></i>
+																			</button>
+													                    </div>
+																	</div>
+																</div>	
+																<div class="col-sm-2">
+																	<div class="form-group input-group-sm">
+																		<label for="exec_taxe" th:text="#{quo_taxe}"></label> 
+																		<select class="form-control form-control-border" id="exec_taxe" th:value="${tax_mod}">
+																			<option></option> 
+																			<option th:if="${taxsession=='1'}" selected="selected" value="1">[[#{vat_free}]]</option>
+																			<option th:unless="${taxsession=='1'}" value="1">[[#{vat_free}]]</option>
+																			
+																			<option th:if="${taxsession=='2'}" selected="selected" value="2">[[#{vat_with}]]</option>
+																			<option th:unless="${taxsession=='2'}" value="2">[[#{vat_with}]]</option>
+																		</select>
+																	</div>
+																</div>
+																<div class="col-sm-4">
+																	<div class="form-group input-group-sm">
+																		<label for="exec_currency" th:text="#{currency}"></label> 
+																		<select class="form-control form-control-border" id="exec_currency">
+																			<option></option>
+																			<option th:if="${currency=='BIF'}" selected="selected" value="BIF">BIF</option>
+																			<option th:unless="${currency=='BIF'}" value="BIF">BIF</option>
+																			<option th:if="${currency=='USD'}" selected="selected" value="USD">USD</option>
+																			<option th:unless="${currency=='USD'}" value="USD">USD</option>
+																			<option th:if="${currency=='EUR'}" selected="selected" value="EUR">EUR</option>
+																			<option th:unless="${currency=='EUR'}" value="EUR">EUR</option>
+																		</select>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.tab-content -->
+												</div><!-- /.card-body -->
+											</div>
+										</div>
+										
+										<div class="tab-pane text-left fade" id="pro_type" role="tabpanel" aria-labelledby="pro_type-tab">
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 5px !important; margin: 10px; background-color: white; margin-top:0 px;">
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group input-group-sm">
+															<label for="rubr_name" th:text="#{rubric_name}"></label> 
+															<div class="form-group input-group input-group-sm">
+																<input type="text" class="form-control form-control-border" id="rubr_name"/>
+																<div class="input-group-append">
+											                        <button type="button" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" th:title="#{rubr_add}" id="add_rubrique" >
+																		<i class="fa fa-plus"></i>
+																	</button>
+											                    </div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+										
+										<div class="tab-pane fade" id="pro_article" role="tabpanel" aria-labelledby="pro_article-tab">
+											
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 5px !important; margin: 10px; background-color: white; margin-top:0 px;">
+												<div class="row">
+				
+													<div class="col-sm-12">
+														<div class="form-group input-group-sm">
+															<label for="quo_art" th:text="#{rubrique}"></label> 
+															<select class="form-control form-control-border" id="exec_rubrique">
+																<option></option>
+																<option th:each="rubrique:${rubriques}" th:value="${rubrique.num}" th:text="${rubrique.name}"></option>
+															</select>
+														</div>
+													</div>
+													
+													<div class="col-sm-12">
+														<div class="form-group input-group-sm">
+															<label for="quo_art" th:text="#{quo_art}"></label> 
+															<input type="text" class="form-control form-control-border" id="exec_article"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-2">
+														<div class="form-group input-group-sm">
+															<label for="exec_unity" th:text="#{exec_unity}"></label> 
+															<input type="text" class="form-control form-control-border" th:placeholder="#{exec_unity}" id="exec_unity"/>
+														</div>
+													</div>
+				
+													<div class="col-sm-2">
+														<div class="form-group input-group-sm">
+															<label for="quo_qte" th:text="#{quo_qte}"></label> 
+															<input type="number" class="form-control form-control-border" th:placeholder="#{inv_art_qte}" id="exec_quantity"/>
+														</div>
+													</div>
+
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="exec_unity_price" th:text="#{quo_unity_price}"></label> 
+															<input type="number" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_unity_price}" id="exec_unity_price"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-2">
+														<div class="form-group input-group-sm">
+															<label for="exec_tax" th:text="#{quo_tax}"></label> 
+															<input style="text-align: right;" type="number" class="form-control form-control-border" th:placeholder="#{quo_tax}" id="exec_tax"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="exec_tax_amount">&nbsp;</label> 
+															<input style="text-align: right;" readonly="readonly" type="number" class="form-control form-control-border" th:placeholder="#{quo_tax_amnt}" id="exec_tax_amount"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="exec_art_total_nvat" th:text="#{quo_nvat_total}"></label> 
+															<input style="text-align: right;" type="number" readonly="readonly" class="form-control form-control-border" th:placeholder="#{quo_nvat_total}" id="exec_art_total_nvat"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="exec_art_total" th:text="#{quo_total}"></label> 
+															<input type="number" readonly="readonly" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_total}" id="exec_art_total"/>
+														</div>
+													</div>
+													<div class="col-sm-1">
+														<div class="form-group input-group-sm">
+															<label for="quo_art_total">&nbsp;</label> 
+															<button type="button" class="btn btn-block btn-outline-success" 
+																data-toggle="tooltip" data-placement="top" th:title="#{add_article_quo}" id="exec_add_article">
+																<i class="fa fa-plus"></i>
+															</button>
+														</div>
+													</div>
+												</div>
+											
+										</fieldset>
+										</div>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+					</section>
+					
+					<section class="col-lg-3 connectedSortable" id="total_section">
+						<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+							<legend style="font-size: medium; margin: 10px; font-weight: bold; font-style: oblique; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; background-color: white; ">[[#{total}]]</legend>
+						
+							<div class="form-group input-group-sm row">
+		                    	<label for="quo_sub_tot" class="col-sm-5 col-form-label" th:text="#{quo_sub_tot}"></label>
+		                    	<div class="col-sm-7 input-group-sm">
+		                      		<input type="text" readonly="readonly"  class="form-control form-control-border" id="exec_sub_tot" th:placeholder="#{quo_sub_tot}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${#numbers.formatInteger(sub,1,'WHITESPACE')}"/>
+		                    	</div>
+		                  	</div>
+		                  	<div class="form-group row">
+		                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_tax}"></label>
+		                    	<div class="col-sm-7 input-group-sm">
+		                      		<input type="text" readonly="readonly" class="form-control form-control-border" id="exec_tax_tot" th:placeholder="#{quo_tax}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${#numbers.formatInteger(tax,1,'WHITESPACE')}"/>
+		                    	</div>
+		                  	</div>
+		                  	<div class="form-group row">
+		                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_total}"></label>
+		                    	<div class="col-sm-7 input-group-sm"> 
+		                      		<input type="text" readonly="readonly" class="form-control form-control-border" id="exec_grand_total" th:placeholder="#{quo_total}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${#numbers.formatInteger(total,1,'WHITESPACE')}"/>
+		                    	</div>
+		                  	</div>
+						</fieldset>
+					</section>
+					
+					<section class="col-lg-12 connectedSortable" id="inv_art_part" >
+						<div class="card">
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="table-responsive">									
+									<table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<td><strong th:text="#{rubrique}"></strong></td>
+												<td><strong th:text="#{quo_art}"></strong></td>
+												<td><strong th:text="#{exec_unity}"></strong></td>
+												<td><strong th:text="#{quo_qte}"></strong></td>
+												<td><strong th:text="#{quo_unity_price}"></strong></td>
+												<td><strong th:text="#{quo_tot_nvat}"></strong></td>
+												<td><strong th:text="#{quo_tax}"></strong></td>
+												<td><strong th:text="#{quo_tax_amnt}"></strong></td>
+												<td><strong th:text="#{quo_tot_wvat}"></strong></td>
+												<td style="text-align: center;"><strong>[-]</strong></td>
+												
+											</tr>
+										</thead>
+										<tbody id="tbl_exec_article">
+											<tr th:each="art:${articlesession}">
+												<td th:text="${art.rubliquename}"></td>
+												<td th:text="${art.article}"></td>
+												<td th:text="${art.unity}"></td>
+												<td style="text-align: right;" th:text="${#numbers.formatInteger(art.quantity,1,'WHITESPACE')}"></td>
+												<td style="text-align: right;" th:text="${#numbers.formatInteger(art.unity_price,1,'WHITESPACE')}"></td>
+												<td style="text-align: right;" th:text="${#numbers.formatInteger(art.art_total_nvat,1,'WHITESPACE')}"></td>
+												<td style="text-align: right;" th:text="${#numbers.formatInteger(art.tax,1,'WHITESPACE')} "></td>
+												<td style="text-align: right;" th:text="${#numbers.formatInteger(art.tax_amount,1,'WHITESPACE')}"></td>
+												<td style="text-align: right;" th:text="${#numbers.formatInteger(art.art_total,1,'WHITESPACE')}"></td>
+												<td><button type="button" class="btn btn-sm btn-danger deleteCartElement" th:data-ref="${art.article}" th:data-rubric="${art.rubliqueid}"><i class="fa fa-trash"> </i></button></td>
+											</tr>
+										</tbody>
+									</table>									
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="new_client" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-university mr-1"></i> <strong>[[#{add_client}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{cli_name}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_name" th:placeholder="#{cli_name}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_contact_person" th:text="#{cli_contact_person}"></label> 
+														<input type="text" class="form-control form-control-border" id="cli_contact_person" th:placeholder="#{cli_contact_person}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="cli_tin" th:text="#{cli_tin}"></label> 
+														<input type="text" class="form-control form-control-border" id="cli_tin" th:placeholder="#{cli_tin}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_telephon" th:text="#{cli_telephon}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_telephon" th:placeholder="#{cli_telephon}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_email" th:text="#{cli_email}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_email" th:placeholder="#{cli_email}" />
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_province" th:text="#{contact_address}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_province" th:placeholder="#{province}"/> 
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_commune">&nbsp;</label> 
+														<input type="text" class="form-control form-control-border" id="cli_commune" th:placeholder="#{com_commune}"/> 
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_district">&nbsp;</label> 
+														<input type="text" class="form-control form-control-border" id="cli_district" th:placeholder="#{com_district}" /> 
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+									                        <label for="checkboxDanger1">[[#{vat_sub}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="saveClient">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsaveClient">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

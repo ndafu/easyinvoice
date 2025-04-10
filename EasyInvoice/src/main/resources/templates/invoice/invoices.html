@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+<head>
+<meta charset="UTF-8" />
+<title>[[#{invoices_management}]]</title>
+</head>
+<body>
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{invoices_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+					
+					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER')"> 
+						<a href="/invoice" th:href="@{/invoice}" type="button" class="btn btn-block btn-outline-success"  
+							data-toggle="tooltip" data-placement="top" th:title="#{add_invoice}"> 
+							<i class="fas fa-plus"></i> 
+						</a>	
+					</div>
+					
+					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER')">
+						<a th:href="@{/invoiceExec}" type="button" class="btn btn-block btn-outline-primary" 
+						data-toggle="tooltip" data-placement="top" th:title="#{add_exec_invoice}" id="add_article">
+							<i class="fas fa-cog"></i>
+						</a>	
+					</div>
+					
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable" id="quotation_list">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<nav class="navbar navbar-light bg-light justify-content-between">
+								  <a class="navbar-brand">[[#{invoices}]]</a>
+								  <form role="form" class="form-inline" method="post" th:action="@{/search}" action="search">
+								   
+									<input type="text" class="form-control form-control-sm form-control-border" style="font-size: small;" id="registrationnumber" name="regNumber" th:value="${regNumber}" th:placeholder="#{reg_number}" data-toggle="tooltip" data-placement="top" th:title="#{reg_number}"/>
+									
+									<input type="text" class="form-control form-control-sm form-control-border" style="font-size: small;" id="validationnumber" name="validationref" th:value="${validationref}" th:placeholder="#{val_number}" data-toggle="tooltip" data-placement="top" th:title="#{val_number}"/>
+									<div th:placeholder="#{client}" data-toggle="tooltip" data-placement="top" th:title="#{client}" >
+										<select  class="form-control form-control-sm form-control-border select2" style="font-size: small;" id="inv_client" name="clientid" th:value="${clientid}" >
+											<option></option>
+											<option th:each="client:${clients}" th:value="${client.id}" th:text="${client.name}"></option>
+										</select>
+									</div>
+									
+									<div th:placeholder="#{val_number}" data-toggle="tooltip" data-placement="top" th:title="#{status}">
+										<select  class="form-control form-control-sm form-control-border select2" style="font-size: small;" id="invoice_status" name = "status" th:placeholder="#{status}" data-toggle="tooltip" data-placement="top" th:title="#{status}" th:value="${status}">
+											<option></option>
+											<option value="1">[[#{inv_gen}]]</option>
+											<option value="2">[[#{inv_validate}]]</option>
+											<option value="-3">[[#{errorTransmitted}]]</option>
+											<option value="3">[[#{cancelled}]]</option>
+											
+											
+										</select>
+									</div>
+									<div class="form-inline">
+									<button type="submit" class="btn btn-block btn-outline-success btn-circle" data-toggle="tooltip" data-placement="top" th:title="#{inv_search}" id="invoice_search">
+										<i class="fa fa-binoculars"></i>
+									</button>
+									
+									</div>
+								  </form>
+								</nav>
+								
+								
+								
+							</div>
+							<!-- /.card-header -->
+							
+						<div class="card-body">
+							
+							<fieldset>
+							<div id="test" class="table-responsive"  style="border: 0px solid #ddd !important; xmin-width: 0; padding: 2px; position: relative; border-radius: 4px; padding-left: 2px !important;padding-right: 2px !important; margin: 4px; margin-left: 4px; margin-right: 4px; ">
+								<table class="table table-bordered table-hover table-sm" id="dataTablew" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<td><strong>[[#{reg_number}]]</strong></td>
+												<td><strong>[[#{val_number}]]</strong></td>
+												<td  sec:authorize="hasAnyRole('ROLE_ADMIN')"><strong th:text="#{quo_expeditaire}"></strong></td>
+												<td><strong th:text="#{quo_client}"></strong></td>
+												<td><strong th:text="#{reg_date}"></strong></td>
+												<td><strong th:text="#{val_date}"></strong></td>
+												<td><strong th:text="#{currency}"></strong></td>
+												<td><strong th:text="#{quo_amount}"></strong></td>
+												<td><strong th:text="#{status}"></strong></td>
+												<td  sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_ADMIN')"><strong>+</strong></td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each ="art:${invoices}" class="art_row" th:data-ref="${art.id}">
+												<td th:text ="${art.referenceNumber}"></td>
+												<td th:text ="${art.validationref}"></td>
+												<td sec:authorize="hasAnyRole('ROLE_ADMIN')" th:text ="${art.organisation.name}"></td>
+												<td th:text ="${art.client.name}"></td>
+												<td th:text ="${#calendars.format(art.invoiceDate, 'dd/MM/yyyy @ HH:mm:ss')}"></td>
+												<td th:text ="${#calendars.format(art.validatedDate, 'dd/MM/yyyy @ HH:mm:ss')}"></td>
+												<td th:text ="${art.currency}"></td>
+												<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.totalAmount,3,'WHITESPACE',0,'COMMA')}"></td>
+												<td>
+													<span class="badge badge-danger" th:if="${art.status==-3}"th:text ="#{errorTransmitted}"></i></span>
+													<span class="badge badge-secondary" th:if="${art.status==1}" th:text ="#{inv_gen}"></span>
+													<span class="badge badge-success" th:if="${art.status==2}" th:text ="#{inv_validate}"></span>
+													<span class="badge badge-success" th:if="${art.status==3}" th:text ="#{inv_obr_ok}"></span>
+													<span class="badge badge-primary" th:if="${art.status==5}">[[#{inv_cancelled_obr}]]</i></span>
+													<span class="badge badge-warning" th:if="${art.status==0}" >[[#{inv_cancelled}]]</i></span>
+													
+													
+												</td>
+												<td  sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_ADMIN')">
+													<div class="input-group-prepend">
+									                	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+									                      	[[#{action}]]
+									                    </button>
+									                    <div class="dropdown-menu">
+									                      	<div class="btn-group">
+										                        <button type="button" class="btn btn-circle btn-default btn-sm viewInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{view_invoice}"><i class="fa fa-eye"> </i></button>
+										                        <button th:if="${art.status == 2}" type="button" class="btn btn-circle btn-warning printInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{print_invoice}"><i class="fa fa-print"> </i></button>
+										                        <a th:href="@{/printI/}+''+${art.id}" th:if="${art.status == 1}" type="button" class="btn btn-circle btn-warning editInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{edit_invoice}"><i class="fa fa-edit"> </i></a> 
+										                        <a th:href="@{/editInvoice/}+''+${art.id}" th:if="${art.status == 1}" type="button" class="btn btn-circle btn-default editInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{edit_invoice}"><i class="fa fa-edit"> </i></a> 
+										                        <button th:if="${art.status == 1}" type="button" class="btn btn-circle btn-danger cancelInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{cancel_invoice}"><i class="fa fa-trash"> </i></button> 
+										                        <button th:if="${art.status == 3}" type="button" class="btn btn-circle btn-sm  btn-danger cancelInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{cancel_invoice}"><i class="fa fa-trash"> </i></button>
+										                        <!--
+										                        <button sec:authorize="hasAnyRole('ROLE_COM_MANAGER')" th:if="${art.status == 1}" type="button" class="btn btn-sm btn-danger validateInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{invoice_validate}"><i class="fa fa-trash"> </i></button> -->
+										                        <button sec:authorize="hasAnyRole('ROLE_COM_MANAGER')" th:if="${art.status == 1}" type="button" class="btn btn-circle btn-sm btn-success validateInvoice" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{invoice_validate}"><i class="fa fa-check"> </i></button>
+										                    </div>
+									                    </div>
+									             	</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+									<div class="col-sm-3">
+										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+									</div>
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<span th:each="i: ${#numbers.sequence(1, totalpages)}"> -->
+<!-- 											<a th:if="${currentPage !=i}" th:href="@{'/articles/' + ${i}}">[[${i}]]</a> -->
+<!-- 											<span th:unless="${currentPage != i}">[[${i}]]</span>&nbsp;&nbsp; -->
+<!-- 										</span> -->
+<!-- 									</div> -->
+									<div class="col-sm-1">
+										<a th:if="${currentPage > 1}" th:href="@{'/invoices/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage < totalpages}" th:href="@{'/invoices/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-7 connectedSortable" id="quotation_det" hidden="hidden">
+						<!-- solid sales graph -->
+						
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-info-circle mr-1"></i> [[#{invoices_detail}]]
+								</h3>
+								<div class="card-tools">
+									<div class="btn-group">
+									<a sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_ACOUNTANT')" th:href="@{/printQ}" target="_blank" type="button" class="btn btn-circle bg-success btn-sm" id="quotation_print">
+										<i class="fas fa-print"></i>
+									</a>
+									<button type="button" class="btn bg-danger btn-circle btn-sm" id="closesection">
+										<i class="fas fa-times"></i>
+									</button>
+									</div>
+									<input type="hidden" id="quotation_id"/>
+								</div>
+							</div>
+							<div class="card-body">
+								<h4 style="text-align: center;">[[#{invoicedetail}]]<br/></h4>
+								<ul class="nav nav-tabs" id="custom-content-above-tab" role="tablist">
+					              <li class="nav-item">
+					                <a class="nav-link active" id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">[[#{gen_info}]]</a>
+					              </li>
+					               	<li class="nav-item">
+					                	<a class="nav-link" id="custom-content-above-messages-tab" data-toggle="pill" href="#custom-content-above-messages" role="tab" aria-controls="custom-content-above-messages" aria-selected="false">[[#{articles}]]</a>
+									</li>
+					              <li class="nav-item">
+					                <a class="nav-link" id="custom-content-above-profile-tab" data-toggle="pill" href="#custom-content-above-profile" role="tab" aria-controls="custom-content-above-profile" aria-selected="false">[[#{client}]]</a>
+					              </li>
+					             
+					            </ul>
+								
+								<div class="tab-custom-content">
+					              <div class="form-group row">
+				                    	
+				                    	<label for="inv_restourne" class="col-sm-3 col-form-label" th:text="#{reg_number}"></label>
+				                    	<div class="col-sm-3 input-group-sm">
+				                      		<span class="form-control form-control-border" id="reg_number" style="font-size: small;text-align: right; " ></span>
+				                    	</div>
+				                    	
+				                    	<label for="inv_restourne" class="col-sm-3 col-form-label" th:text="#{val_number}"></label>
+				                    	<div class="col-sm-3 input-group-sm">
+				                      		<span class="form-control form-control-border" id="val_number" style="font-size: small;text-align: right; " ></span>
+				                    	</div>
+				                  	</div>
+					            </div>
+								
+								<div class="tab-content" id="custom-content-above-tabContent">
+					              <div class="tab-pane fade show active" id="custom-content-above-home" role="tabpanel" aria-labelledby="custom-content-above-home-tab">
+					                 <table style="border-color: white; border: 0px;" class="table table-borderless table-sm" width="100%" cellspacing="0">
+									<tr>
+										<td>
+											<div>
+												<fieldset style="border: 0px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-5px;">
+													
+													<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-2 col-form-label" th:text="#{reg_date}"></label>
+								                    	<div class="col-sm-4 input-group-sm">
+															<span class="form-control form-control-border" id="reg_date" style="font-size: small;text-align: right; " ></span>
+								                    	</div>
+								                    	
+								                    	
+								                    	
+								                    	<label for="inv_restourne" class="col-sm-1 col-form-label">/</label>
+								                    	<div class="col-sm-3 input-group-sm">
+								                      		<span class="form-control form-control-border" id="reg_person" style="font-size: small;text-align: right; " ></span>
+								                    	</div>
+								                  	</div>
+								                  	
+								                  	<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-2 col-form-label" th:text="#{val_date}"></label>
+								                    	<div class="col-sm-4 input-group-sm">
+															<span class="form-control form-control-border" id="val_date" style="font-size: small;text-align: right; " ></span>
+								                    	</div>
+								                    	
+								                    	<label for="inv_restourne" class="col-sm-1 col-form-label">/</label>
+								                    	<div class="col-sm-3 input-group-sm">
+								                      		<span class="form-control form-control-border" id="val_person" style="font-size: small;text-align: right; " ></span>
+								                    	</div>
+								                  	</div>
+								                  	
+								                  	<div class="form-group row">
+								                    	<label for="ebms_id" class="col-sm-2 col-form-label" th:text="#{ebms_id}"></label>
+								                    	<div class="col-sm-10 input-group-sm">
+															<span class="form-control form-control-border" id="ebms_id" style="font-size: small;text-align: right; " ></span>
+								                    	</div>
+								                    	
+								                  	</div>
+								                  	
+								                  	<div class="form-group row">
+														<label for="ebms_msg" class="col-sm-2 col-form-label" th:text="#{ebms_msg}"></label>
+							                    		<div class="col-sm-10 input-group-sm">
+							                      			<span class="form-control form-control-border" id="ebms_msg" style="font-size: small;text-align: left; " ></span>
+							                    		</div>
+														  
+													</div>
+													
+								                  	<div class="form-group row">
+														<label for="ebms_ack" class="col-sm-2 col-form-label" th:text="#{ebms_ack}"></label>
+							                    		<div class="col-sm-10 input-group-sm">
+							                      			<span class="form-control form-control-border" id="ebms_ack" style="font-size: small;text-align: right; " ></span>
+							                    		</div>
+														  
+													</div>
+													
+													
+								                  	
+								                  	<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-2 col-form-label" th:text="#{canc_date}"></label>
+								                    	<div class="col-sm-3 input-group-sm">
+															<span class="form-control form-control-border" id="canc_date" style="font-size: small;text-align: right; " ></span>
+								                    	</div>
+								                    	
+								                    	<label for="inv_restourne" class="col-sm-3 col-form-label" th:text="#{canc_person}"></label>
+								                    	<div class="col-sm-3 input-group-sm">
+								                      		<span class="form-control form-control-border" id="canc_person" style="font-size: small;text-align: right; " ></span>
+								                    	</div>
+								                    </div>
+								                    <div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-3 col-form-label" th:text="#{canc_raison}"></label>
+								                    	<div class="col-sm-9 input-group-sm">
+								                      		<span class="form-control form-control-border" id="canc_raison" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                  	</div>
+												</fieldset>
+											</div>
+										</td>
+									</tr>
+								</table> 
+					              </div>
+					              <div class="tab-pane fade" id="custom-content-above-profile" role="tabpanel" aria-labelledby="custom-content-above-profile-tab">
+					              	<table style="border-color: white; border: 0px;" class="table table-borderless table-sm" width="100%" cellspacing="0">
+										<tr>
+											<td style="width:65%">
+												<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-5px;">
+<!--													<legend style="font-size: medium; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; ">Client : </legend>-->
+													<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-2 col-form-label" th:text="#{quo_client}"></label>
+								                    	<div class="col-sm-10 input-group-sm">
+								                      		<span class="form-control form-control-border" id="cli_raison" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                  	</div>
+													
+													<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-2 col-form-label" th:text="#{cli_tin}"></label>
+								                    	<div class="col-sm-4 input-group-sm">
+								                      		<span class="form-control form-control-border" id="cli_NIF" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                    	
+								                    	<label for="inv_restourne" class="col-sm-3 col-form-label" th:text="#{vat_sub}"></label>
+								                    	<div class="col-sm-3 input-group-sm">
+								                      		<span class="form-control form-control-border" id="cli_isvatpayer" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                  	</div>
+													
+													<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-12 col-form-label" th:text="#{company_address}"></label>
+								                    	<div class="col-sm-12 input-group-sm">
+								                      		<span class="form-control form-control-border" id="cli_com_address" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                  	</div>
+								                 </fieldset>
+											</td>
+											<td style="width:35%">
+												<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-5px;">
+<!--											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:8px;margin-left:-5px;">-->
+													<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-3 col-form-label" th:text="#{currency}"></label>
+								                    	<div class="col-sm-9 input-group-sm">
+								                      		<span class="form-control form-control-border" id="inv_currency" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                  	</div>
+								                  	
+								                  	<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-3 col-form-label" th:text="#{info_vat}"></label>
+								                    	<div class="col-sm-9 input-group-sm">
+								                      		<span class="form-control form-control-border" id="inv_taxable" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                  	</div>
+								                  	
+								                  	<div class="form-group row">
+								                    	<label for="inv_restourne" class="col-sm-12 col-form-label" th:text="#{inv_pyt_mod}"></label>
+								                    	<div class="col-sm-12 input-group-sm">
+								                      		<span class="form-control form-control-border" id="inv_payment_mode" style="font-size: small;text-align: left; " ></span>
+								                    	</div>
+								                  	</div>
+								                 </fieldset>
+											</td>
+										</tr>
+									</table>   
+					              </div>
+					              <div class="tab-pane fade" id="custom-content-above-messages" role="tabpanel" aria-labelledby="custom-content-above-messages-tab">
+					              	<div class="table-responsive">
+										<fieldset style="border: 0px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white; margin-top: -2px;">
+											<table id="quot_art" class="table table-bordered table-hover table-sm" width="100%" cellspacing="0" style="margin-left: 2px; margin-right: 20px;">
+												<thead>
+													<tr>
+														<td><strong>Qté</strong></td>
+														<td><strong>Nature de l'article ou service</strong></td>
+														<td><strong>[[#{art_unity}]]</strong></td>
+														<td><strong>PU</strong></td>
+														<td><strong>TVA</strong></td>
+														<td><strong>PVHTVA</strong></td>
+														<td><strong>Valeur TVA</strong></td>
+														<td><strong>PVTVAC</strong></td>
+													</tr>
+												</thead>
+												<tbody id="inv_items_detail">
+													
+												</tbody>
+											</table>
+										</fieldset>
+									</div> 
+								</div>
+					              
+					            </div>
+								
+							</div>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="cancelInvoice" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="col-md-12">
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fa fa-book mr-1"></i> <strong>[[#{cancel_invoice}]]</strong> 
+								</h3>
+								<div class="card-tools">	
+								</div>
+							</div>
+							<div class="card-body">
+								<div class="tab-content">
+									<fieldset>
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group input-group-sm">
+													<label for="tax_title" th:text="#{Invoice}"></label> 
+													<input type="hidden"  id="inv_id"/>
+													<input autocomplete="off" type="text" class="form-control form-control-border" id="canc_inv" th:placeholder="#{Invoice}" />
+												</div>
+											</div>
+											
+											<div class="col-sm-2">
+												<div class="form-group input-group-sm">
+													<label for="art_description" th:text="#{invoice_date}"></label> 
+													<input type="text" class="form-control form-control-border" id="canc_inv_date" th:placeholder="#{invoice_date}" />
+												</div>
+											</div>
+											
+											<div class="col-sm-6">
+												<div class="form-group input-group-sm">
+													<label for="art_description" th:text="#{client_name}"></label> 
+													<input type="text" class="form-control form-control-border" id="canc_inv_client" th:placeholder="#{client_name}" />
+												</div>
+											</div>
+										</div>
+										
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group input-group-sm">
+													<label for="canc_invoice_message" th:text="#{cancel_motif}"></label> 
+													<textarea autocomplete="off" class="form-control form-control-border" id="canc_invoice_message" rows="3" th:placeholder="#{cancel_motif}"></textarea>
+												</div>
+											</div>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" id="save_cancel_invoice">[[#{btn_save}]]</button>
+					<button type="button" class="btn btn-danger" id="save_cancel_cancel_invoice">[[#{btn_close}]]</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="printInvoice" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="col-md-12">
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fa fa-book mr-1"></i> <strong>[[#{print_invoice}]]</strong> 
+								</h3>
+								<div class="card-tools">	
+								</div>
+							</div>
+							<div class="card-body">
+								<div class="tab-content">
+									<fieldset>
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group input-group-sm">
+													<label for="tax_title" th:text="#{Invoice}"></label> 
+													<input type="hidden"  id="print_inv_id"/>
+													<input autocomplete="off" type="text" class="form-control form-control-border" id="print_inv" th:placeholder="#{Invoice}" />
+												</div>
+											</div>
+											
+											<div class="col-sm-2">
+												<div class="form-group input-group-sm">
+													<label for="art_description" th:text="#{invoice_date}"></label> 
+													<input type="text" class="form-control form-control-border" id="print_inv_date" th:placeholder="#{invoice_date}" />
+												</div>
+											</div>
+											
+											<div class="col-sm-6">
+												<div class="form-group input-group-sm">
+													<label for="art_description" th:text="#{client_name}"></label> 
+													<input type="text" class="form-control form-control-border" id="print_inv_client" th:placeholder="#{client_name}" />
+												</div>
+											</div>
+										</div>
+										
+										<div class="row">
+<!-- 											<div class="col-sm-4"> -->
+<!-- 												<div class="form-group input-group-sm"> -->
+<!-- 													<label for="print_unity">[[#{print_unity}]]</label>  -->
+<!-- 													<div class="form-group input-group-sm"> -->
+<!-- 														<div class="icheck-danger d-inline" data-toggle="tooltip" data-placement="top" th:title="#{print_unity}"> -->
+<!-- 									                        <input type="checkbox" checked="checked" id="print_unity"> -->
+<!-- 									                        <label for="print_unity">&nbsp;</label> -->
+<!-- 								                      	</div> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<!-- 											</div> -->
+											
+											<div class="col-sm-4">
+												<div class="form-group input-group-sm">
+													<label for="print_avanc">[[#{print_avanc}]]</label> 
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline" data-toggle="tooltip" data-placement="top" th:title="#{print_avanc}">
+									                        <input type="checkbox" checked="checked" id="print_avanc">
+									                        <label for="print_avanc">&nbsp;</label>
+								                      	</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" id="save_printM">[[#{btn_save}]]</button>
+					<button type="button" class="btn btn-danger" id="cancel_save_printM">[[#{btn_close}]]</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	</div>
+	
+	
+	
+	
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	lang="en">
+<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- Google Font: Source Sans Pro -->
+<!-- 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+
+		<link rel="stylesheet" th:href="@{../plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+		<!-- iCheck -->
+		<link rel="stylesheet" th:href="@{../plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+		
+		<!-- Theme style -->
+		<link rel="stylesheet" th:href="@{../dist/css/adminlte.min.css}">
+		
+		<!-- summernote -->
+		<link rel="stylesheet" th:href="@{../plugins/summernote/summernote-bs4.min.css}">
+		
+		<style type="text/css">
+			.tooltip {
+				padding:5px;
+				font-size:12px;
+				opacity:0.85;
+				filter: alpha(opacity=85);
+				background-repeat:no-repeat;
+				background-image:url(tooltip.gif);
+			}
+			.tooltip-inner {
+				padding:5px 10px;
+				max-width:200px;
+				pointer-events:none;
+				color:white;
+				text-align:center;
+				background-color:green;
+				border-radius:3px;
+				box-shadow:0 0 3px rgba(0,0,0,0.25);
+			}
+			.tooltip-bottom {
+				background-position:top center;
+			}
+			.tooltip-top {
+				background-position:bottom center;
+			}
+			.tooltip-left {
+				background-position:right center;
+			}
+			.tooltip-right {
+				background-position:left center;
+			}
+		</style>
+		
+	</head>
+<body>
+
+
+<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+<!-- 		<div class="content-header"> -->
+<!-- 			<div class="container-fluid"> -->
+<!-- 				<div class="row mb-2"> -->
+<!-- 					<div class="col-sm-6"> -->
+<!-- 						<strong><h1 class="m-0 text-dark" th:text="#{quotations_management}"></h1></strong> -->
+<!-- 					</div> -->
+<!-- 					/.col -->
+<!-- 				</div> -->
+<!-- 				/.row -->
+<!-- 			</div> -->
+<!-- 			<!-- /.container-fluid --> 
+<!-- 		</div> -->
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-7 connectedSortable" id="quotation_det" style="font-size: smaller;">
+						<!-- solid sales graph -->
+						<div class="card">
+						
+							<table style="border-color: white; border: 0px;" class="table table-borderless" width="100%" cellspacing="0">
+								<tr>
+									<td colspan="2" style="text-align: center; width: 30%;">
+										<div class="form-group input-group-sm row" style="text-align: center;">
+					                    	<img style="padding-left: 5px;" th:src="@{${organisation.logo}}" alt="Logo" height="120px;">
+					                  	</div>
+					                </td>
+									<td colspan="2" style="text-align: center; width: 40%;">
+										<span style="font: bold; font-size:medium;"><strong>[[${organisation.name}]]</strong></span><br/>
+										<span>[[${organisation.addressNumber}]], Avenue de [[${organisation.addressAvenue+', '+organisation.addressQuartier}]]</span><br/>
+										<span>[[${organisation.addressProvince+' - '+organisation.addressCommune}]]</span><br>
+										<span>[[${'B.P. : '+organisation.postalNumber}]]</span><br>
+										<span>[[${'Tél. : '+organisation.telephone}]]</span>
+									</td>
+									<td colspan="2" style="text-align: right; width: 30%;">
+										<span><strong>NIF : </strong>[[${organisation.tin}]]</span><br/>
+										<span><strong>RC : </strong>[[${organisation.tradeNumber}]]</span><br/>
+										<span><strong>Centre fiscal : </strong>[[${organisation.fiscalCenter}]]</span><br/>
+										<span><strong>Forme juridique : </strong>[[${organisation.juridictionForm}]]</span><br/>
+										<span th:if="${organisation.isVATPayer}"><strong>Assujetti à la TVA : </strong>OUI</span>
+										<span th:unless="${organisation.isVATPayer}"><strong>Assujetti à la TVA : </strong>NON</span><br/>
+										<span><strong>Secteur d'activité : </strong>[[${organisation.activitySecter}]]</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="6">
+										<div>
+											<fieldset style=" font-family:fantasy; border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-25px;">
+												<h4 style="text-align: center;">FACTURE PROFORMA NUMERO : <span th:text="${quotation.reference}"></span> DU <span th:text="${#calendars.format(quotation.quotationDate, 'dd/MM/yyyy')}"></span></h4>
+											</fieldset>
+										</div>
+									</td>
+								</tr>
+								
+								<tr>
+									<td colspan="4" style="padding-left: -25px;">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; margin-top:-20px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-25px;">
+											<legend style="font-size: medium; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; ">Adressée à</legend>
+											<span><strong>Nom et Prénom ou Raison sociale  </strong></span><span th:text="${' : '+quotation.client.name}" style="margin-left: 10px;"></span><br/>
+											<span><strong>NIF  </strong></span><span th:text="${' : '+quotation.client.TIN}" style="margin-left: 200px;"></span><br/>
+											<span><strong>Résident à  </strong></span><span th:text="${': '+quotation.client.addInfos+', Téléphone : '+quotation.client.telephone+', e-mail : '+quotation.client.email}" style="margin-left: 157px;"></span><br/>
+											<span><strong>Assujetti à la TVA  </strong></span>
+											<span th:if="${quotation.client.vatSubject}" style="margin-left: 113px;">
+												: OUI
+                      						</span>
+											<span th:unless="${quotation.client.vatSubject}" style="margin-left: 100px;">
+												: NON
+                      						</span><br/>
+						                 </fieldset>
+									</td>
+									<td colspan="2">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; margin-top:-20px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-8px;margin-left:-25px;">
+											<span><strong>Monnaie : </strong></span><span style="margin-left: 5px;" th:text="${quotation.currency}"></span><br/>
+											<span><strong>Info. TVA : </strong></span>
+											<span th:if="${quotation.taxApplicable=='2'}" style="margin-left: 5px;">TVA APPLICABLE</span>
+											<span th:unless="${quotation.taxApplicable=='2'}" style="margin-left: 5px;">TVA EXONEREE</span><br/>
+						                 	<div style="float: right;" id="qrcode"></div>
+						                 </fieldset>
+									</td>
+								</tr>
+								
+							</table>
+							
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; margin-top:-20px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-25px;">
+								<legend style="font-size: medium; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; ">Article(s)</legend>
+								<table id="quot_art" class="table table-bordered" width="95%" cellspacing="0" style="margin-left: 2px; margin-right: 20px;">
+									<thead>
+										<tr>
+											<td><strong>Qté</strong></td>
+											<td><strong>Article ou service</strong></td>
+											<td><strong>PU</strong></td>
+											<td><strong>TVA</strong></td>
+											<td><strong>PVHTVA</strong></td>
+											<td><strong>Valeur TVA</strong></td>
+											<td><strong>PVTVAC</strong></td>
+										</tr>
+									</thead>
+									<tbody id="quo_items_detail">
+										<tr th:each ="art:${quotation.articlesQuotation}">
+											<td style="text-align: right;" th:text ="${#numbers.formatInteger(art.quantity,1,'WHITESPACE')}"></td>
+											<td th:text ="${art.title}"></td>
+											<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.unityPrice,3,'WHITESPACE',0,'COMMA')}"></td>
+											<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.taxRate,1,'WHITESPACE',2,'COMMA')}"></td>
+											<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.totalNVAT,3,'WHITESPACE',0,'COMMA')}"></td>
+											<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.tax,3,'WHITESPACE',0,'COMMA')}"></td>
+											<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.total,3,'WHITESPACE',0,'COMMA')}"></td>
+										</tr>
+										
+										<tr>
+											<td colspan="4" style="text-align: right;"><strong>PRIX DE VENTE HTVA</strong></td>
+											<td colspan="3" style="text-align: right;" th:text ="${#numbers.formatDecimal(quotation.subTotal,3,'WHITESPACE',0,'COMMA')}"></td>
+										</tr>
+										<tr>
+											<td colspan="4" style="text-align: right;"><strong>TVA</strong></td>
+											<td colspan="3" style="text-align: right;" th:text ="${#numbers.formatDecimal(quotation.totalTax,3,'WHITESPACE',0,'COMMA')}"></td>
+										</tr>
+										<tr>
+											<td colspan="4" style="text-align: right;"><strong>TOTAL TVAC</strong></td>
+											<td colspan="3" style="text-align: right;" th:text ="${#numbers.formatDecimal(quotation.grandTotal,3,'WHITESPACE',0,'COMMA')}"></td>
+										</tr>
+									</tbody>
+								</table>
+							</fieldset>
+						
+						
+							<br/>
+							
+							<table>
+								<tr>
+									<td>Nous disons : <strong>[[${quotation.currency}]] [[${moneyInLetter}]].</strong></td>
+								</tr>
+							</table>
+							<br><br/>
+							<table>
+								<tr>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 40%;text-align: center;"><strong>Fait à [[${organisation.addressProvince}]], le [[${currentDay}]]</strong></td>
+								</tr>
+								<tr><td style="width: 30%;">&nbsp;</td>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 40%;text-align: center;"></td>
+								</tr>
+								<tr>
+									<td style="text-align: center;"></td>
+								</tr>
+								<tr>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 40%;text-align: center;">[[${organisation.representativeName}]]</strong></td>
+								</tr>
+								<tr>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 40%;text-align: center;">.....................................................</strong></td>
+								</tr>
+								<tr>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 30%;">&nbsp;</td>
+									<td style="width: 40%;text-align: center;">[[${organisation.representativePosition}]]</strong></td>
+								</tr>
+							</table>
+							<!-- /.card-header -->
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+	</div>
+
+
+
+		
+		 <!-- Control Sidebar -->
+		 <aside class="control-sidebar control-sidebar-dark">
+		   <!-- Control sidebar content goes here -->
+		 </aside>
+		 <!-- /.control-sidebar -->
+		</div>
+	<!-- ./wrapper -->
+	
+	<!-- jQuery -->
+	<script th:src="@{plugins/jquery/jquery.min.js}" src="plugins/jquery/jquery.min.js"></script>
+	<!-- jQuery UI 1.11.4 -->
+	<script th:src="@{plugins/jquery-ui/jquery-ui.min.js}" src="plugins/jquery-ui/jquery-ui.min.js"></script>
+	<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+	<!-- Bootstrap 4 -->
+	<script th:src="@{plugins/bootstrap/js/bootstrap.bundle.min.js}" src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- AdminLTE App -->
+	<script src="dist/js/adminlte.js" th:src="@{dist/js/adminlte.js}"></script>
+	
+	
+	<script th:src="@{js/super.js}" src="js/super.js"></script>
+	<script>
+		
+		window.addEventListener("load", window.print());
+		//$('.select2').select2()
+	</script>
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{company_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{company_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" 
+						data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+<!-- 					<div th:if="${sizeOrganisation <= 0}" class="col-sm-1" sec:authorize="hasRole('ROLE_ADMIN')"> -->
+					<div class="col-sm-1" sec:authorize="hasRole('ROLE_ADMIN')">
+						<button type="button" class="btn btn-block btn-outline-success" 
+						data-toggle="tooltip" data-placement="top" th:title="#{add_company}" id="add_company">
+							<i class="fas fa-plus"></i>
+						</button>	
+					</div>
+	
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-university mr-1"></i><strong> [[#{list_company}]]</strong>
+								</h3>
+							</div>
+							<!-- /.card-header -->
+<!--       							<div class="card card-solid"> -->
+        							<div class="card-body pb-0">
+          								<div class="row">
+											<div th:each ="com:${organisations}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+												<div class="card bg-light d-flex flex-fill">
+													<div class="card-header text-muted border-bottom-0">
+														<strong>[[${com.name}]], [[${com.juridictionForm}]]</strong>
+													</div>
+													<div class="card-body pt-0">
+														<div class="row">
+															<div class="col-7">
+																<h2 class="lead" th:text="${com.representativeName}"></h2>
+																<p class="text-muted text-sm">[[#{tin}]] : [[${com.tin}]] / [[#{trade_number}]]: [[${com.tradeNumber}]] / [[${com.fiscalCenter}]] / [[${com.activitySecter}]] </p>
+																<ul class="ml-4 mb-0 fa-ul text-muted">
+																	<li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span>[[${com.addressNumber+', '+com.addressAvenue+', '+com.addressProvince+', '+com.addressCommune}]]</li>
+																	<li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> [[${com.telephone}]]</li>
+																</ul>
+															</div>
+															<div class="col-5 text-center">
+																<img th:src="@{${com.logo}}" alt="company logo" class="img-fluid">
+															</div>
+														</div>
+													</div>
+													<div class="card-footer">
+														<div class="text-right">
+															<button class="com_edit btn btn-sm btn-success" th:data-ref="${com.id}"><i class="fas fa-edit"></i></button>
+														</div>
+													</div>
+												</div>
+											</div>
+          								</div>
+        							</div>
+								        
+						</div>
+					</section>
+					
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="new_company" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header p-2">
+									<ul class="nav nav-pills">
+										<li class="nav-item"><a class="nav-link active" href="#genPart" data-toggle="tab">[[#{company_gen}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#bankInfo" data-toggle="tab">[[#{bank_info}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#addressPart" data-toggle="tab">[[#{company_address}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#interco" data-toggle="tab">[[#{interconnection}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#logoPart" data-toggle="tab">[[#{company_logo}]]</a></li>
+									</ul>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<!-- declaration part -->
+										<div class="active tab-pane" id="genPart">
+										
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-8">
+														<div class="form-group input-group-sm">
+															<label for="com_name" th:text="#{com_name}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_name" th:placeholder="#{com_name}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="com_tin" th:text="#{com_tin}"></label> 
+															<input type="text" class="form-control form-control-border" id="com_tin" th:placeholder="#{com_tin}" />
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-7">
+														<div class="form-group input-group-sm">
+															<label for="com_name" th:text="#{com_repr_name}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_repr_name" th:placeholder="#{com_repr_name}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-5">
+														<div class="form-group input-group-sm">
+															<label for="com_tin" th:text="#{com_repr_position}"></label> 
+															<input type="text" class="form-control form-control-border" id="com_repr_position" th:placeholder="#{com_repr_position}" />
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+												
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="com_fiscal_center" th:text="#{trade_num}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="trade_num" th:placeholder="#{trade_number}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="com_fiscal_center" th:text="#{com_fiscal_center}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_fiscal_center" th:placeholder="#{com_fiscal_center}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="com_activity_sector" th:text="#{com_activity_sector}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_activity_sector" th:placeholder="#{com_activity_sector}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="com_jur_form" th:text="#{com_jur_form}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_jur_form" th:placeholder="#{com_jur_form}" />
+														</div>
+													</div>
+												</div>
+												
+												
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group input-group-sm">
+															<label for="com_more_info" th:text="#{com_more_info}"></label> 
+															<textarea rows="4" class="form-control form-control-border" id="com_more_info" th:placeholder="#{com_more_info}"></textarea>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<div class="icheck-danger d-inline">
+										                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+										                        <label for="checkboxDanger1">[[#{vat_sub}]]</label>
+									                      	</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<div class="icheck-danger d-inline">
+										                        <input type="checkbox" id="tc_subj">
+										                        <label for="tc_subj">[[#{tc_sub}]]</label>
+									                      	</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<div class="icheck-danger d-inline">
+										                        <input type="checkbox" id="lv_subj">
+										                        <label for="lv_subj">[[#{pfl_sub}]]</label>
+									                      	</div>
+														</div>
+													</div>
+													
+												</div>
+											</fieldset>
+										</div>
+										
+										<div class="tab-pane" id="bankInfo">
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="bank_name" th:text="#{bank_name}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="bank_name" th:placeholder="#{bank_name}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="bank_account" th:text="#{bank_account}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="bank_account" th:placeholder="#{bank_account}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-6">
+														<div class="form-group input-group-sm">
+															<label for="com_jur_form" th:text="#{account_title}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="account_title" th:placeholder="#{account_title}" />
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+										
+										<div class="tab-pane" id="addressPart">
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="com_name" th:text="#{province}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_province" th:placeholder="#{province}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="com_tin" th:text="#{com_commune}"></label> 
+															<input type="text" class="form-control form-control-border" id="com_commune" th:placeholder="#{com_commune}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="com_tin" th:text="#{com_district}"></label> 
+															<input type="text" class="form-control form-control-border" id="com_district" th:placeholder="#{com_district}" />
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="com_name" th:text="#{com_street}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_street" th:placeholder="#{com_street}" />
+														</div>
+													</div>
+													<div class="col-sm-1">
+														<div class="form-group input-group-sm">
+															<label for="com_tin">&nbsp;</label> 
+															<input type="text" class="form-control form-control-border" id="com_street_number" th:placeholder="#{com_street_number}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="com_fiscal_center" th:text="#{com_postal_number}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_postal_number" th:placeholder="#{com_postal_number}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="com_telephone" th:text="#{com_telephone}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="com_telephone" th:placeholder="#{com_telephone}" />
+														</div>
+													</div>
+												</div>												
+											</fieldset>
+										</div>
+
+										<div class="tab-pane" id="interco">
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 3px; margin-left: 0px; background-color: white;">
+												<legend style="font-size:small; margin: 2px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 5px; color: black ;">
+													<b th:text="#{orbr}"></b>
+												</legend>
+												<div class="row">
+													<div class="col-sm-2">
+														<div class="form-group input-group-sm">
+															<label for="obr_status" th:text="#{obr_status}"></label> 
+															<div class="icheck-success">
+		                       	 								<input type="checkbox" id="obr_status" value="obr_status">
+		                        								<label for="obr_status"></label>
+		                      								</div>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="bank_name" th:text="#{obr_url}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="obr_url" th:placeholder="#{obr_url}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="bank_account" th:text="#{obr_username}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="obr_username" th:placeholder="#{obr_username}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="com_jur_form" th:text="#{obr_password}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="obr_password" th:placeholder="#{obr_password}" />
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+
+										<div class="tab-pane" id="logoPart">
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-12">
+													
+														<div class="form-group">
+															<label for="com_logo" th:text="#{com_logo}"></label> 
+															<div class="input-group">
+																<div class="custom-file">
+																	<input type="file" class="custom-file-input" id="com_logo">
+																	<label class="custom-file-label" for="com_logo">[[#{choose_logo}]]</label>
+																</div>
+															</div>
+															<input type="hidden" name="logo_value" id="logo_value"/>
+															
+														</div>
+													</div>
+													
+													<div class="col-sm-12">
+														<img hidden="hidden" id="logo_img64" style="width: 50%; align-content: center;" data-ref=""/>
+													</div>
+													
+												</div>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="saveCompany">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsaveCompany">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+			
+			</div>
+			
+			<!-- Edit organisation -->
+			<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="edit_company" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header p-2">
+									<ul class="nav nav-pills">
+										<li class="nav-item"><a class="nav-link active" href="#ed_genPart" data-toggle="tab">[[#{company_gen}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#ed_bankInfo" data-toggle="tab">[[#{bank_info}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#ed_addressPart" data-toggle="tab">[[#{company_address}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#ed_interco" data-toggle="tab">[[#{interconnection}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#ed_logoPart" data-toggle="tab">[[#{company_logo}]]</a></li>
+									</ul>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<!-- declaration part -->
+										<div class="active tab-pane" id="ed_genPart">
+										
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-8">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_name" th:text="#{com_name}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_name" th:placeholder="#{com_name}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_tin" th:text="#{com_tin}"></label> 
+															<input type="hidden" id="com_id"/>
+															<input readonly="readonly" type="text" class="form-control form-control-border" id="ed_com_tin" th:placeholder="#{com_tin}" />
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-7">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_name" th:text="#{com_repr_name}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_repr_name" th:placeholder="#{com_repr_name}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-5">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_repr_position" th:text="#{com_repr_position}"></label> 
+															<input type="text" class="form-control form-control-border" id="ed_com_repr_position" th:placeholder="#{com_repr_position}" />
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+												
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="ed_trade_num" th:text="#{trade_num}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_trade_num" th:placeholder="#{trade_number}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_fiscal_center" th:text="#{com_fiscal_center}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_fiscal_center" th:placeholder="#{com_fiscal_center}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_activity_sector" th:text="#{com_activity_sector}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_activity_sector" th:placeholder="#{com_activity_sector}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_jur_form" th:text="#{com_jur_form}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_jur_form" th:placeholder="#{com_jur_form}" />
+														</div>
+													</div>
+												</div>
+												
+												
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_more_info" th:text="#{com_more_info}"></label> 
+															<textarea rows="4" class="form-control form-control-border" id="ed_com_more_info" th:placeholder="#{com_more_info}"></textarea>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<div class="icheck-danger d-inline">
+										                        <input type="checkbox" checked="checked" id="ed_vat_subj">
+										                        <label for="ed_vat_subj">[[#{vat_sub}]]</label>
+									                      	</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<div class="icheck-danger d-inline">
+										                        <input type="checkbox" id="ed_tc_subj">
+										                        <label for="ed_tc_subj">[[#{tc_sub}]]</label>
+									                      	</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<div class="icheck-danger d-inline">
+										                        <input type="checkbox" id="ed_lv_subj">
+										                        <label for="ed_lv_subj">[[#{pfl_sub}]]</label>
+									                      	</div>
+														</div>
+													</div>
+													
+												</div>
+											</fieldset>
+										</div>
+										
+										<div class="tab-pane" id="ed_bankInfo">
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="ed_bank_name" th:text="#{bank_name}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_bank_name" th:placeholder="#{bank_name}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="ed_bank_account" th:text="#{bank_account}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_bank_account" th:placeholder="#{bank_account}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-6">
+														<div class="form-group input-group-sm">
+															<label for="ed_account_title" th:text="#{account_title}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_account_title" th:placeholder="#{account_title}" />
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+										
+										<div class="tab-pane" id="ed_addressPart">
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_province" th:text="#{province}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_province" th:placeholder="#{province}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_commune" th:text="#{com_commune}"></label> 
+															<input type="text" class="form-control form-control-border" id="ed_com_commune" th:placeholder="#{com_commune}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_district" th:text="#{com_district}"></label> 
+															<input type="text" class="form-control form-control-border" id="ed_com_district" th:placeholder="#{com_district}" />
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_street" th:text="#{com_street}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_street" th:placeholder="#{com_street}" />
+														</div>
+													</div>
+													<div class="col-sm-1">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_street_number">&nbsp;</label> 
+															<input type="text" class="form-control form-control-border" id="ed_com_street_number" th:placeholder="#{com_street_number}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_postal_number" th:text="#{com_postal_number}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_postal_number" th:placeholder="#{com_postal_number}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="ed_com_telephone" th:text="#{com_telephone}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_com_telephone" th:placeholder="#{com_telephone}" />
+														</div>
+													</div>
+												</div>												
+											</fieldset>
+										</div>
+
+
+										<div class="tab-pane" id="ed_interco">
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 3px; margin-left: 0px; background-color: white;">
+												<legend style="font-size:small; margin: 2px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 5px; color: black ;">
+													<b th:text="#{orbr}"></b>
+												</legend>
+												<div class="row">
+													<div class="col-sm-2">
+														<div class="form-group input-group-sm">
+															<label for="ed_obr_status" th:text="#{obr_status}"></label> 
+															<div class="icheck-success">
+		                       	 								<input type="checkbox" id="ed_obr_status" value="obr_status">
+		                        								<label for="ed_obr_status"></label>
+		                      								</div>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="bank_name" th:text="#{obr_url}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_obr_url" th:placeholder="#{obr_url}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="bank_account" th:text="#{obr_username}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_obr_username" th:placeholder="#{obr_username}" />
+														</div>
+													</div>
+													
+													<div class="col-sm-3">
+														<div class="form-group input-group-sm">
+															<label for="com_jur_form" th:text="#{obr_password}"></label> 
+															<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_obr_password" th:placeholder="#{obr_password}" />
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+
+										<div class="tab-pane" id="ed_logoPart">
+											<fieldset>
+												<div class="row">
+													<div class="col-sm-12">
+													
+														<div class="form-group">
+															<label for="ed_com_logo" th:text="#{com_logo}"></label> 
+															<div class="input-group">
+																<div class="custom-file">
+																	<input type="file" class="custom-file-input" id="ed_com_logo">
+																	<label class="custom-file-label" for="ed_com_logo">[[#{choose_logo}]]</label>
+																</div>
+															</div>
+															<input type="hidden" name="logo_value" id="ed_logo_value"/>
+															
+														</div>
+													</div>
+													
+													<div class="col-sm-12">
+														<img hidden="hidden" id="ed_logo_img64" style="width: 50%; align-content: center;" data-ref=""/>
+													</div>
+													
+												</div>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="ed_saveCompany">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="ed_cancelsaveCompany">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+			<!-- End Edit organisation -->
+			
+			<!-- View organisation -->
+			
+			
+			<!-- End view organisation -->
+		</div>
+	</div>
+</body>
+</html>

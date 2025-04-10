@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>[[#{app_name}]]</title>
+		<!-- Google Font: Source Sans Pro -->
+		<link rel="stylesheet" th:href="@{https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback}">
+		<!-- Font Awesome -->
+		<link rel="stylesheet" th:href="@{plugins/fontawesome-free/css/all.min.css}">
+		<!-- icheck bootstrap -->
+		<link rel="stylesheet" th:href="@{plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+		<!-- Theme style -->
+		<link rel="stylesheet" th:href="@{dist/css/adminlte.min.css}">
+	</head>
+	<body class="hold-transition login-page">
+		<div class="login-box">
+		  	<!-- /.login-logo -->
+		  	<div class="card card-outline card-primary">
+		    	<div class="card-header text-center">
+		      		<a th:href="@{/}" class="h1"><b>Easy</b>Invoice</a>
+		    	</div>
+		    	<div class="card-body">
+		      		<div th:if="${loginError}" style="margin-top:0px; margin-bottom: 10px;" class="alert alert-danger alert-dismissible fade show" role="alert">
+					  	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					    	<span aria-hidden="true">&times;</span>
+					  	</button>
+					  	<strong>[[#{con_error_title}]]</strong> [[#{con_check_cred}]]
+					</div>
+		      		<form action="login" method="post">
+		        		<div class="input-group mb-3">
+		          			<div class="input-group-append">
+		            			<div class="input-group-text">
+		              				<span class="fas fa-envelope"></span>
+		            			</div>
+		          			</div>
+		          			<input type="text" class="form-control form-control-sm form-control-border" th:placeholder="#{username}" name="username">
+		          			
+		        		</div>
+		        		<div class="input-group mb-3">
+		          			<div class="input-group-append">
+		            			<div class="input-group-text">
+		              				<span class="fas fa-lock"></span>
+		            			</div>
+		          			</div>
+		          			<input type="password" class="form-control form-control-sm form-control-border" th:placeholder="#{password}" name="password">
+		          			
+		        		</div>
+		        		<div class="row">
+		          
+		          			<!-- /.col -->
+		          			<div class="col-12">
+		            			<button type="submit" class="btn btn-primary btn-block">[[#{signin}]]</button>
+		          			</div>
+		          			<!-- /.col -->
+		        		</div>
+		      		</form>
+		    	</div>
+		    	<!-- /.card-body -->
+		  	</div>
+		 	<!-- /.card -->
+		</div>
+		<!-- /.login-box -->
+	
+		<!-- jQuery -->
+		<script th:src="@{plugins/jquery/jquery.min.js}"></script>
+		<!-- Bootstrap 4 -->
+		<script th:src="@{plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+		<!-- AdminLTE App -->
+		<script th:src="@{dist/js/adminlte.min.js}"></script>
+	</body>
+</html>

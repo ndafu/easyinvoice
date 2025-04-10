@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{client_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{client_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" 
+						data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+					
+					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_COM_HEAD_FINA','ROLE_COM_HEAD_ADMIN','ROLE_COM_MANAGER')">
+						<button type="button" class="btn btn-block btn-outline-success" 
+						data-toggle="tooltip" data-placement="top" th:title="#{add_client}" id="add_client">
+							<i class="fas fa-plus"></i>
+						</button>	
+					</div>
+	
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-university mr-1"></i> <strong>[[#{list_clients}]]</strong> 
+								</h3>
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 10px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered table-sm table-hover" id="dataTable" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+<!-- 												<td><strong>#</strong></td> -->
+												<td><strong th:text="#{cli_name}"></strong></td>
+												<td><strong th:text="#{cli_type}"></strong></td>
+												<td sec:authorize="hasRole('ROLE_ADMIN')"><strong th:text="#{cli_registar}"></strong></td>
+												<td><strong th:text="#{cli_contact_person}"></strong></td>
+												<td><strong th:text="#{vat_sub}"></strong></td>
+												<td><strong th:text="#{cli_tin}"></strong></td>
+												<td><strong th:text="#{cli_telephon}"></strong></td>
+												<td><strong th:text="#{cli_email}"></strong></td>
+												<td><strong th:text="#{cli_reg_date}"></strong></td>
+												<td><strong th:text="#{cli_address}"></strong></td>
+												<td sec:authorize="hasAnyRole('ROLE_COM_HEAD_FINA','ROLE_COM_HEAD_ADMIN','ROLE_COM_MANAGER')"><strong>+</strong></td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each ="cli:${clients}" class="cli_row" th:data-ref="${cli.id}">
+<!-- 												<td th:text ="${cli.id}"></td> -->
+												<td th:text ="${cli.name}"></td>
+												<td>[[#{${cli.typeClient}}]]</td>
+												<td sec:authorize="hasRole('ROLE_ADMIN')" th:text ="${cli.organisation.name}"></td>
+												<td th:text ="${cli.contactPerson}"></td>
+												<td th:text ="${cli.vatSubject}"></td>
+												<td th:text ="${cli.TIN}"></td>
+												<td th:text ="${cli.telephone}"></td>
+												<td th:text ="${cli.email}"></td>
+												<td th:text ="${#calendars.format(cli.registrationDate, 'dd/MM/yyyy hh:mm:ss')}"></td>
+												<td th:text ="${cli.addInfos}"></td>
+												<td sec:authorize="hasAnyRole('ROLE_COM_HEAD_FINA','ROLE_COM_HEAD_ADMIN','ROLE_COM_MANAGER')">
+													<div class="btn-group">
+								                        <button type="button" class="btn btn-circle btn-danger updclients" th:data-ref="${cli.id}"><i class="fa fa-edit"> </i></button>
+								                    </div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+									<div class="col-sm-3">
+										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+									</div>
+									<div class="col-sm-1">
+										<a th:if="${currentPage > 1}" th:href="@{'/clients/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage < totalpages}" th:href="@{'/clients/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-4 connectedSortable" hidden="hidden">
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-info-circle mr-1"></i> <strong>[[#{invoice_det}]]</strong>
+								</h3>
+								<div class="card-tools">
+									<button type="button" class="btn bg-danger btn-sm"
+										data-card-widget="remove">
+										<i class="fas fa-times"></i>
+									</button>
+								</div>
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 10px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered table-sm table-hover" id="dataTable det_table" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<td><strong>#</strong></td>
+												<td><strong th:text="#{inv_date}"></strong></td>
+												<td><strong th:text="#{inv_amount}"></strong></td>
+												<td><strong th:text="#{inv_status}"></strong></td>
+											</tr>
+										</thead>
+										<tbody id="detailInvoice">
+											<tr>
+												<td colspan="5"><i>[[#{invoice_item_detail}]]</i></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="new_client" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-university mr-1"></i> <strong>[[#{add_client}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{cli_type}"></label> 
+														<select class="form-control form-control-border" id="cli_type" >
+															<option></option>
+															<option value="pers">[[#{pers}]]</option>
+															<option value="entr">[[#{entr}]]</option>
+														</select>
+													</div>
+												</div>
+												
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="cli_tin" th:text="#{cli_tin}"></label> 
+														<input type="text" class="form-control form-control-border" id="cli_tin" th:placeholder="#{cli_tin}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-6">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{cli_name}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_name" th:placeholder="#{cli_name}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="tax_title">&nbsp;</label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_abbr" th:placeholder="#{cli_abbr}" />
+													</div>
+												</div>												
+											</div>
+											
+											<div class="row">
+												
+												<div class="col-sm-3">
+													<div class="form-group input-group-sm">
+														<label for="cli_contact_person" th:text="#{cli_contact_person}"></label> 
+														<input type="text" class="form-control form-control-border" id="cli_contact_person" th:placeholder="#{cli_contact_person}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_telephon" th:text="#{cli_telephon}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_telephon" th:placeholder="#{cli_telephon}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_email" th:text="#{cli_email}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_email" th:placeholder="#{cli_email}" />
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_province" th:text="#{contact_address}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="cli_province" th:placeholder="#{province}"/> 
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_commune">&nbsp;</label> 
+														<input type="text" class="form-control form-control-border" id="cli_commune" th:placeholder="#{com_commune}"/> 
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_district">&nbsp;</label> 
+														<input type="text" class="form-control form-control-border" id="cli_district" th:placeholder="#{com_district}" /> 
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+									                        <label for="checkboxDanger1">[[#{vat_sub}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="saveClient">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsaveClient">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<!-- Edit user -->
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="ed_client" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-university mr-1"></i> <strong>[[#{up_client}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{cli_type}"></label> 
+														<select class="form-control form-control-border" id="ed_cli_type" >
+															<option></option>
+															<option value="pers">[[#{pers}]]</option>
+															<option value="entr">[[#{entr}]]</option>
+														</select>
+													</div>
+												</div>
+												
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="cli_tin" th:text="#{cli_tin}"></label> 
+														<input type="text" class="form-control form-control-border" id="ed_cli_tin" th:placeholder="#{cli_tin}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-6">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{cli_name}"></label> 
+														<input type="hidden" id="ed_id" />
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_cli_name" th:placeholder="#{cli_name}" />
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="tax_title">&nbsp;</label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_cli_abbr" th:placeholder="#{cli_abbr}" />
+													</div>
+												</div>	
+												
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-3">
+													<div class="form-group input-group-sm">
+														<label for="cli_contact_person" th:text="#{cli_contact_person}"></label> 
+														<input type="text" class="form-control form-control-border" id="ed_cli_contact_person" th:placeholder="#{cli_contact_person}" />
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_telephon" th:text="#{cli_telephon}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_cli_telephon" th:placeholder="#{cli_telephon}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="form-group input-group-sm">
+														<label for="cli_email" th:text="#{cli_email}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_cli_email" th:placeholder="#{cli_email}" />
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_province" th:text="#{contact_address}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_cli_province" th:placeholder="#{province}"/> 
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_commune">&nbsp;</label> 
+														<input type="text" class="form-control form-control-border" id="ed_cli_commune" th:placeholder="#{com_commune}"/> 
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="cli_district">&nbsp;</label> 
+														<input type="text" class="form-control form-control-border" id="ed_cli_district" th:placeholder="#{com_district}" /> 
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" id="ed_vat_subj">
+									                        <label for="ed_vat_subj">[[#{vat_sub}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="ed_saveClient">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="ed_cancelsaveClient">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End edit user -->
+	</div>
+</body>
+</html>

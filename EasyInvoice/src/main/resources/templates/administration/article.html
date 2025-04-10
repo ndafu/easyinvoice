@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{article_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{article_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+					
+					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN','ROLE_COM_HEAD_FINA','ROLE_COM_LOG_OFF')">
+						<button type="button" class="btn btn-block btn-outline-success" 
+						data-toggle="tooltip" data-placement="top" th:title="#{add_article}" id="add_article">
+							<i class="fas fa-plus"></i>
+						</button>	
+					</div>
+
+					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN','ROLE_COM_HEAD_FINA','ROLE_COM_LOG_OFF')">
+						<button type="button" class="btn btn-block btn-outline-success" 
+						data-toggle="tooltip" data-placement="top" th:title="#{import_articles}" id="import_article">
+							<i class="fas fa-download"></i>
+						</button>	
+					</div>
+	
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-folder-open mr-1"></i> [[#{list_articles}]]
+								</h3>
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 10px; background-color: white;">
+							<div class="table-responsive">
+								<table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+<!-- 												<td><strong>#</strong></td> -->
+												<td><strong th:text="#{art_title}"></strong></td>
+												<td><strong th:text="#{art_description}"></strong></td>
+												<td><strong th:text="#{art_unity}"></strong></td>
+												<td sec:authorize="hasRole('ROLE_ADMIN')"><strong th:text="#{com_registar}"></strong></td>
+												<td><strong th:text="#{art_reg_date}"></strong></td>
+												<td><strong th:text="#{art_unity_price}"></strong></td>
+												<td><strong th:text="#{art_taxe}"></strong></td>
+												<td><strong th:text="#{status}"></strong></td>
+												<td sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN','ROLE_COM_HEAD_FINA','ROLE_COM_LOG_OFF')"><strong>+</strong></td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each ="art:${articles}" class="art_row" th:data-ref="${art.id}">
+<!-- 												<td th:text ="${art.id}"></td> -->
+												<td th:text ="${art.title}"></td>
+												<td th:text ="${art.description}"></td>
+												<td th:text ="${art.unity}"></td>
+												<td sec:authorize="hasRole('ROLE_ADMIN')" th:text ="${art.organisation.name}"></td>
+												<td th:text ="${#calendars.format(art.registrationDate, 'dd/MM/yyyy hh:mm')}"></td>
+												<td th:text ="${art.unityPrice}"></td>
+												<td th:text ="${art.tax.abbreviation +' ['+art.tax.rate+'%]'}"></td>
+												<td>
+													<span th:if="${art.status}" th:text ="#{active}"></span>
+													<span th:unless="${art.status}" th:text ="#{no_active}"></span>
+												</td>
+												
+												<td sec:authorize="hasAnyRole('ROLE_COM_MANAGER','ROLE_COM_HEAD_ADMIN','ROLE_COM_HEAD_FINA','ROLE_COM_LOG_OFF')">
+													<div class="btn-group">
+								                        <button type="button" class="btn btn-circle btn-danger updateArticle" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{edit_art}+' : '+${art.title}"><i class="fa fa-edit"> </i></button>
+								                    </div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+									<div class="col-sm-3">
+										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+									</div>
+<!-- 									<div class="col-sm-1"> -->
+<!-- 										<span th:each="i: ${#numbers.sequence(1, totalpages)}"> -->
+<!-- 											<a th:if="${currentPage !=i}" th:href="@{'/articles/' + ${i}}">[[${i}]]</a> -->
+<!-- 											<span th:unless="${currentPage != i}">[[${i}]]</span>&nbsp;&nbsp; -->
+<!-- 										</span> -->
+<!-- 									</div> -->
+									<div class="col-sm-1">
+										<a th:if="${currentPage > 1}" th:href="@{'/article/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage < totalpages}" th:href="@{'/article/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<section class="col-lg-4 connectedSortable" hidden="hidden">
+						<!-- solid sales graph -->
+						
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-info-circle mr-1"></i> [[#{article_det}]]
+								</h3>
+								<div class="card-tools">
+									<button type="button" class="btn bg-info btn-sm"
+										data-card-widget="collapse">
+										<i class="fas fa-minus"></i>
+									</button>
+									<button type="button" class="btn bg-info btn-sm"
+										data-card-widget="remove">
+										<i class="fas fa-times"></i>
+									</button>
+								</div>
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 10px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered table-hover table-sm" id="dataTable det_table" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<td><strong>#</strong></td>
+												<td><strong th:text="#{pric_amount}"></strong></td>
+												<td><strong th:text="#{pric_start}"></strong></td>
+												<td><strong th:text="#{pric_end}"></strong></td>
+												<td><strong th:text="#{status}"></strong></td>
+											</tr>
+										</thead>
+										<tbody id="detailcategory">
+											<tr>
+												<td colspan="5"><i>[[#{art_message_detail}]]</i></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="new_article" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-book mr-1"></i> <strong>[[#{add_article}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{title}"></label> 
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="art_title" th:placeholder="#{title}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-6">
+													<div class="form-group input-group-sm">
+														<label for="art_description" th:text="#{description}"></label> 
+														<input type="text" class="form-control form-control-border" id="art_description" th:placeholder="#{description}" />
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="art_unity" th:text="#{unity}"></label> 
+														<input type="text" class="form-control form-control-border" id="art_unity" th:placeholder="#{unity}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="unity_price" th:text="#{unity_price}"></label> 
+														<input autocomplete="off" type="number" class="form-control form-control-border" id="art_unity_price" th:placeholder="#{unity_price}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="d-inline input-group-sm">
+														<label for="art_tax" th:text="#{tax}"></label> 
+														<select id="art_tax" class="form-control form-control-border">
+															<option></option>
+															<option th:each="ta:${taxs}" th:value="${ta.id}" th:text="${ta.abbreviation+'['+ta.rate+']'}"></option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+									                        <label for="checkboxDanger1">[[#{status}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="saveArticle">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="cancelsaveArticle">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1"
+			role="dialog" id="importArticles" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<form method="post" th:action="@{/uploadArticle}" enctype="multipart/form-data">
+												<div class="row">
+													<div class="col-sm-8">
+														<div class="form-group">
+															<label for="ed_com_logo">&nbsp;</label> 
+															<div class="input-group">
+																<div class="custom-file">
+																	<input type="file" class="custom-file-input" id="csv_import" name="file" accept="application/vnd.ms-excel" >
+																	<label class="custom-file-label" for="csv_import">[[#{choose_csv_file}]]</label>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-2">
+														<div class="form-group">
+															<label for="sub_file">&nbsp;</label> 
+															<div class="input-group">
+																<div class="custom-file">
+																	<input class="btn btn-primary" type="submit" name="test" id="sub_file">
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-sm-2">
+														<div class="form-group">
+															<label for="cancel_sub_file">&nbsp;</label> 
+															<div class="input-group">
+																<div class="custom-file">
+																	<button type="button" class="btn btn-danger" id="cancel_sub_file">[[#{btn_close}]]</button>
+																</div>
+															</div>
+														</div>
+													</div>
+
+
+												</div>
+
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<span id="input_name"></span> 
+														</div>
+													</div>
+												</div>
+											</form>
+										</fieldset>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="ed_article" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title">
+										<i class="fa fa-book mr-1"></i> <strong>[[#{edit_article}]]</strong> 
+									</h3>
+									<div class="card-tools">	
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="tax_title" th:text="#{title}"></label> 
+														<input type="hidden" name="id_ref" id="id">
+														<input autocomplete="off" type="text" class="form-control form-control-border" id="ed_art_title" th:placeholder="#{title}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-6">
+													<div class="form-group input-group-sm">
+														<label for="art_description" th:text="#{description}"></label> 
+														<input type="text" class="form-control form-control-border" id="ed_art_description" th:placeholder="#{description}" />
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group input-group-sm">
+														<label for="ed_art_unity" th:text="#{unity}"></label> 
+														<input type="text" class="form-control form-control-border" id="ed_art_unity" th:placeholder="#{unity}" />
+													</div>
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group input-group-sm">
+														<label for="unity_price" th:text="#{unity_price}"></label> 
+														<input autocomplete="off" type="number" class="form-control form-control-border" id="ed_art_unity_price" th:placeholder="#{unity_price}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-5">
+													<div class="d-inline input-group-sm">
+														<label for="art_tax" th:text="#{tax}"></label> 
+														<select id="ed_art_tax" class="form-control form-control-border">
+															<option></option>
+															<option th:each="ta:${taxs}" th:value="${ta.id}" th:text="${ta.abbreviation+'['+ta.rate+']'}"></option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group input-group-sm">
+														<div class="icheck-danger d-inline">
+									                        <input type="checkbox" id="ed_checkboxDanger1">
+									                        <label for="ed_checkboxDanger1">[[#{status}]]</label>
+								                      	</div>
+													</div>
+												</div>
+											
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="ed_saveArticle">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="ed_cancelsaveArticle">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+
+		<!-- Edit user -->
+		<div class="modal fade bd-example-modal-lg" tabindex="-1"
+			role="dialog" id="editcategory" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="tab-content">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{title}"></label> 
+														<input type="hidden" id="edid"/>
+														<input type = "hidden" id="edid"/>
+														<input type="text" class="form-control" id="edtitle" 
+														th:placeholder="#{title}" />
+													</div>
+												</div>
+												
+											</div>	
+											
+											<div class="row">
+												
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="name" th:text="#{code}"></label> 
+														<input readonly="readonly"
+															type="text" class="form-control" id="edcode"
+															th:placeholder="#{code}" />
+													</div>
+												</div>
+												
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{unity}"></label> <input
+															type="text" class="form-control" id="edunity"
+															th:placeholder="#{unity}" />
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="name" th:text="#{minstock}"></label> <input
+															type="text" class="form-control" id="edminstock"
+															th:placeholder="#{minstock}" />
+													</div>
+												</div>
+											</div>
+																					
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="name" th:text="#{comment}"></label> 
+														<textarea rows="5" class="form-control" id="edcomment"></textarea>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="edsavecategory">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="edcancelcategorysave">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End edit user -->
+	</div>
+</body>
+</html>

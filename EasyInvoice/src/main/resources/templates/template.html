@@ -1,0 +1,519 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Google Font: Source Sans Pro -->
+<!-- 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+		<!-- Font Awesome -->
+		<link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}" href="static/plugins/fontawesome-free/css/all.min.css">
+		<!-- Ionicons -->
+<!-- 		<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> -->
+		<!-- Tempusdominus Bootstrap 4 -->
+		<link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}" href="static/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+		
+		<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}" href="static/plugins/select2/css/select2.min.css">
+		<link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}" href="static/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+		<!-- iCheck -->
+		<link rel="stylesheet" th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}" href="static/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+		<!-- JQVMap -->
+		<link rel="stylesheet" th:href="@{/plugins/jqvmap/jqvmap.min.css}" href="static/plugins/jqvmap/jqvmap.min.css">
+		<!-- Theme style -->
+		<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}" href="static/dist/css/adminlte.min.css">
+		<!-- overlayScrollbars -->
+		<link rel="stylesheet"th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}" href="static/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+		<!-- Daterange picker -->
+		<link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}" href="static/plugins/daterangepicker/daterangepicker.css">
+		<script th:href="@{https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js}"></script>
+		<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}" href="static/plugins/toastr/toastr.min.css" >
+		
+		
+		<!-- DataTables -->
+		  <link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}" href="static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+		  <link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}" href="static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+		  <link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}" href="static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+		<!-- dropzonejs -->
+  		<link rel="stylesheet" href="static/plugins/dropzone/min/dropzone.min.css" th:href="@{/plugins/dropzone/min/dropzone.min.css}">
+		<!-- summernote -->
+		<link rel="stylesheet" th:href="@{/plugins/summernote/summernote-bs4.min.css}" href="static/plugins/summernote/summernote-bs4.min.css">
+		
+		<style type="text/css">
+			.tooltip {
+				padding:5px;
+				font-size:12px;
+				opacity:0.85;
+				filter: alpha(opacity=85);
+				background-repeat:no-repeat;
+				background-image:url(tooltip.gif);
+			}
+			.tooltip-inner {
+				padding:5px 10px;
+				max-width:200px;
+				pointer-events:none;
+				color:white;
+				text-align:center;
+				background-color:green;
+				border-radius:3px;
+				box-shadow:0 0 3px rgba(0,0,0,0.25);
+			}
+			.tooltip-bottom {
+				background-position:top center;
+			}
+			.tooltip-top {
+				background-position:bottom center;
+			}
+			.tooltip-left {
+				background-position:right center;
+			}
+			.tooltip-right {
+				background-position:left center;
+			}
+			
+			
+			.btn-circle {
+			  width: 30px;
+			  height: 30px;
+			  text-align: center;
+			  padding: 4px 0;
+			  font-size: 12px;
+			  line-height: 1.428571429;
+			  border-radius: 15px;
+			}
+			.btn-circle.btn-lg {
+			  width: 50px;
+			  height: 50px;
+			  padding: 10px 16px;
+			  font-size: 18px;
+			  line-height: 1.33;
+			  border-radius: 25px;
+			}
+			.btn-circle.btn-xl {
+			  width: 70px;
+			  height: 70px;
+			  padding: 10px 16px;
+			  font-size: 24px;
+			  line-height: 1.33;
+			  border-radius: 35px;
+			}
+		</style>
+		
+		<link th:rel="stylesheet" th:href="@{/datetime/css/bootstrap-datepicker.css}"/>
+    	<link th:rel="stylesheet" th:href="@{/datetime/css/bootstrap-datepicker.standalone.css}"/>
+		
+	</head>
+	<body class="hold-transition sidebar-mini layout-fixed sidebar-mini layout-fixed layout-navbar-fixed text-sm layout-footer-fixed sidebar-mini-xs">
+		<div class="wrapper">
+			<!-- Preloader -->
+			<div class="preloader flex-column justify-content-center align-items-center">
+				<img class="animation__shake" th:src="@{/img/easyinvoice.png}" src="static/img/easyinvoice.png" alt="EasyInvoiceLogo" width="300">
+			</div>
+			<!-- Navbar : menu  -->
+			<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+				<!-- Left navbar links -->
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+					</li>
+				</ul>
+			  	<!-- Right navbar links -->
+			  	<ul class="navbar-nav ml-auto">
+			    <!-- Navbar Search -->
+			    	<!--
+			    	<li class="nav-item">
+			      		<a class="nav-link" data-widget="navbar-search" href="#" role="button">
+			        		<i class="fas fa-search"></i>
+			      		</a>
+			      		<div class="navbar-search-block">
+			        		<form class="form-inline">
+			          			<div class="input-group input-group-sm">
+			            			<input class="form-control form-control-navbar" type="search" th:placeholder="#{search}" aria-label="Search">
+		            				<div class="input-group-append">
+		              					<button class="btn btn-navbar" type="submit">
+		                					<i class="fas fa-search"></i>
+		              					</button>
+		              					<button class="btn btn-navbar" type="button" data-widget="navbar-search">
+		                					<i class="fas fa-times"></i>
+		              					</button>
+		            				</div>
+			          			</div>
+			        		</form>
+			      		</div>
+			    	</li> -->
+			    	
+			    	
+			    	<li class="nav-item dropdown">
+						<a class="nav-link" data-toggle="dropdown" href="#"> 
+						<i class="fas fa-language mr-2"></i> 
+							<span th:text="#{change_language}"></span>
+						</a>
+						<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+							
+							<a th:href="@{''(lang=fr)}" class="dropdown-item"> 
+								<img th:src="@{/img/france-flag-round-icon-16.png}" class="img-size-25 mr-3" />
+								<span class="text-muted text-sm" th:text="#{french}"></span>
+							</a>
+							<div class="dropdown-divider"></div>
+							<a th:href="@{''(lang=en)}" class="dropdown-item"> 
+								<img th:src="@{/img/united-kingdom-flag-round-small.png}" style="width: 16px;" class="img-size-25 mr-3"/>
+								<span class="text-muted text-sm" th:text="#{english}"></span>
+							</a>
+						</div>
+					</li>
+			    	<!-- Messages Dropdown Menu -->
+			    	<!--
+			    	<li class="nav-item dropdown">
+			      		<a class="nav-link" data-toggle="dropdown" href="#">
+			        		<i class="far fa-comments"></i>
+			        		<span class="badge badge-danger navbar-badge">3</span>
+			      		</a>
+			      		<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+			        		<a href="#" class="dropdown-item">
+			          			<!-- Message Start -->
+			          			<!--<div class="media">
+			            			<img th:src="@{/img/pers.jpg}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+			            			<div class="media-body">
+			              				<h3 class="dropdown-item-title">
+			                				Brad Diesel
+			                				<span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+			              				</h3>
+			              				<p class="text-sm">Call me whenever you can...</p>
+			              				<p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+			            			</div>
+			          			</div>
+			          			<!-- Message End -->
+			        		<!--</a>
+			        		<div class="dropdown-divider"></div>
+			      		</div>
+			    		</li>
+			    		<!-- Notifications Dropdown Menu -->
+			    		<!--<li class="nav-item dropdown">
+			      			<a class="nav-link" data-toggle="dropdown" href="#">
+			        			<i class="far fa-bell"></i>
+			        			<span class="badge badge-warning navbar-badge">15</span>
+			      			</a>
+			      			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+			        			<span class="dropdown-item dropdown-header">15 Notifications</span>
+			        			<div class="dropdown-divider"></div>
+			        			<a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+			      			</div>
+			    		</li>
+			    		-->
+			    		
+			    		<li class="nav-item dropdown"><a class="nav-link" data-toggle="dropdown" href="#">
+			    			<img th:src="@{/img/pers.jpg}" alt="User Avatar" class="img-size-50 mr-3 img-circle" style="height: 100%; width: 100%;">
+<!-- 			    			<span sec:authentication="name"></span></a> -->
+							<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+								<a th:href="@{/profil}" class="dropdown-item profil"> <!-- Message Start -->
+									<div class="media">
+										<img th:src="@{/img/pers.jpg}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+										<div class="media-body">
+											<h3 class="dropdown-item-title">
+												<span sec:authentication="principal.userName"></span> 
+												<div class="dropdown-divider"></div>
+												[<span style="font-style: italic; text-align: center; " sec:authentication="principal.organisationName"></span>]
+											</h3>
+										</div>
+									</div> <!-- Message End -->
+								</a>
+								<div class="dropdown-divider"></div>
+								<a th:href="@{/profil}" class="dropdown-item dropdown-footer profil">[[#{profil}]]</a>
+								<div class="dropdown-divider"></div>
+								<a href="/logout" sec:ishref="logout" th:href="@{/logout}" class="dropdown-item dropdown-footer">[[#{logout}]]</a>
+							</div>
+						</li>
+			    		
+			    		
+			    		<li class="nav-item">
+					      	<a class="nav-link" data-widget="fullscreen" href="#" role="button">
+					        	<i class="fas fa-expand-arrows-alt"></i>
+					      	</a>
+				    	</li>
+			  		</ul>
+				</nav>
+		 		<!-- /.navbar -->
+		
+		 		<!-- Main Sidebar Container -->
+		 		<div th:replace="fragments/menu"></div>
+				<!-- Content Wrapper. Contains page content -->
+				<section layout:fragment="content"></section>
+				
+				<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="updateProfil" aria-hidden="true" style="font-size: small;">
+				  	<div class="modal-dialog modal-lg">
+					    <div class="modal-content">
+					    	<div class="modal-body">
+								<div class="col-md-12">
+									<div class="card">
+										<div class="card-header p-2">
+											<ul class="nav nav-pills">
+												<li class="nav-item"><a class="nav-link active" href="#genPart" data-toggle="tab">[[#{user_gen}]]</a></li>
+	<!-- 											<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">[[#{user_role}]]</a></li> -->
+											</ul>
+										</div>
+										<!-- /.card-header -->
+										<div class="card-body">
+											<div class="tab-content">
+												<!-- declaration part -->
+												<div class="active tab-pane" id="genPart" >
+													<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+														<div class="row">
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="name" th:text = "#{username}"></label>
+																	<input  readonly="readonly" type="text" style="font-size: small;" class="form-control form-control-sm form-control-border" id="prof_username" th:placeholder="#{username}"/>
+																</div>
+															</div>
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="name" th:text="#{name}"></label> 
+																	<input type="text" style="font-size: small;" class="form-control form-control-sm form-control-border" id="prof_lst_name" th:placeholder="#{lst_name}"/>
+																</div>
+															</div>
+															
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="name">&nbsp;</label>
+																	<input type="text" style="font-size: small;" class="form-control form-control-sm form-control-border" id="prof_fst_name" th:placeholder="#{fst_name}"/>
+																</div>
+															</div>
+														</div>
+														
+														<div class="row">
+															<div class="col-sm-3">
+																<div class="form-group">
+																	<label for="name" th:text = "#{organization}"></label>
+																	<input readonly="readonly" style="font-size: small;" class="form-control form-control-sm form-control-border" id="prof_organisation"/>
+	<!-- 																<select class="form-control form-control-border" id="organization"> -->
+	<!-- 																	<option></option> -->
+	<!-- 																	<option th:each="org:${organisations}" th:value="${org.id}" th:text="${org.name}"></option> -->
+	<!-- 																</select> -->
+																</div>
+															</div>
+															<div class="col-sm-5">
+																<div class="form-group">
+																	<label for="name" th:text="#{email}"></label> 
+																	<input type="text" style="font-size: small;" class="form-control form-control-sm form-control-border" id="prof_email" th:placeholder="#{email}"/>
+																</div>
+															</div>
+															
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="name" th:text="#{phone}"></label> 
+																	<input type="text" style="font-size: small;" class="form-control form-control-sm form-control-border" id="prof_phone" th:placeholder="#{phone}"/>
+																</div>
+															</div>
+															
+														</div>
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="name" th:text="#{password}"></label>
+																	<div class="input-group">
+																		<input type="password" style="font-size: small;" class="form-control form-control-sm form-control-border rounded-0" id="prof_password" th:placeholder="#{password}"/>
+																		<span class="input-group-append">
+														                    <button type="button" class="btn btn-sm btn-danger btn-flat" id="prof_see_pass"><i class="fa fa-eye"></i></button>
+														                    <button type="button" class="btn btn-sm btn-success btn-flat" id="prof_hide_pass" hidden="hidden"><i class="fa fa-eye-slash"></i></button>
+														                </span>
+																	</div>
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="name" th:text="#{conform_password}"></label>
+																	<input type="password" style="font-size: small;" class="form-control form-control-sm form-control-border" id="prof_password_confirm" th:placeholder="#{conform_password}"/>
+																</div>
+															</div>
+														</div>
+													</fieldset>
+												</div>
+												<!-- declaration part : end -->
+												
+											</div>
+											<!-- /.tab-content -->
+										</div>
+										<!-- /.card-body -->
+									</div>
+									<!-- /.nav-tabs-custom -->
+								</div>
+							</div>
+									
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-sm btn-primary" id="prof_saveuser">[[#{btn_save}]]</button>
+								<button type="button" class="btn btn-sm btn-danger" id="prof_cancel_save">[[#{btn_close}]]</button>
+							</div>
+							
+					    </div>
+					    
+				  </div>
+				  
+			</div>
+				<!-- /.content-wrapper -->
+		 <footer class="main-footer">
+		   <strong>
+		   	Copyright &copy; 2021-<script type="text/javascript">var year = new Date();document.write(year.getFullYear());</script> <a href="http://easyinvoice.tech">Digital Space</a>.</strong>
+		   All rights reserved.
+		   <div class="float-right d-none d-sm-inline-block">
+		     <b>Version</b> 3.2.0
+		   </div>
+		 </footer>
+		
+		 <!-- Control Sidebar -->
+		 <aside class="control-sidebar control-sidebar-dark">
+		   <!-- Control sidebar content goes here -->
+		 </aside>
+		 <!-- /.control-sidebar -->
+		</div>
+	<!-- ./wrapper -->
+	
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}" src="plugins/jquery/jquery.min.js"></script>
+	<!-- jQuery UI 1.11.4 -->
+	<script th:src="@{/plugins/jquery-ui/jquery-ui.min.js}" src="plugins/jquery-ui/jquery-ui.min.js"></script>
+	<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+	<script>
+	  $.widget.bridge('uibutton', $.ui.button)
+	</script>
+	<!-- Bootstrap 4 -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}" src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}" src="plugins/chart.js/Chart.min.js"></script>
+	<!-- Sparkline -->
+	<script th:src="@{/plugins/sparklines/sparkline.js}" src="plugins/sparklines/sparkline.js"></script>
+	<!-- JQVMap -->
+	<script th:src="@{/plugins/jqvmap/jquery.vmap.min.js}" src="plugins/jqvmap/jquery.vmap.min.js"></script>
+	<script th:src="@{/plugins/jqvmap/maps/jquery.vmap.usa.js}" src="plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+	<!-- jQuery Knob Chart -->
+	<script th:src="@{/plugins/jquery-knob/jquery.knob.min.js}" src="plugins/jquery-knob/jquery.knob.min.js"></script>
+	<!-- daterangepicker -->
+	<script th:src="@{/plugins/moment/moment.min.js}" src="plugins/moment/moment.min.js"></script>
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}" src="plugins/daterangepicker/daterangepicker.js"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js" th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- Summernote -->
+	<script src="plugins/summernote/summernote-bs4.min.js" th:src="@{/plugins/summernote/summernote-bs4.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js" th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script src="dist/js/adminlte.js" th:src="@{/dist/js/adminlte.js}"></script>
+	
+	<!-- Toastr -->
+	<script src="static/plugins/toastr/toastr.min.js" th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	
+	<!-- Select2 -->
+	<script src="static/plugins/select2/js/select2.full.min.js" th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	
+	<!-- datetime -->
+	<script th:src="@{/datetime/js/bootstrap-datepicker.js}"></script>
+	
+	<!-- AdminLTE for demo purposes -->
+	<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+	<script th:src="@{dist/js/pages/dashboard.js}" src="dist/js/pages/dashboard.js"></script>
+	
+<!-- 	<script th:src="@{/js/super.js}" src="static/js/super.js"></script> -->
+	
+	<script th:inline="javascript" th:src="@{/js/}+${jsName}"></script>
+	
+	<script th:src="@{/js/jquery.csv-0.71.min.js}" src="static/js/jquery.csv-0.71.min.js"></script>
+	<script src="plugins/chart.js/Chart.min.js" th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script src="static/js/dashboard.js" th:src="@{/js/dashboard.js}"></script>
+	
+	<!-- DataTables  & Plugins -->
+	<script src="static/plugins/datatables/jquery.dataTables.min.js" th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script src="static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script src="static/plugins/datatables-responsive/js/dataTables.respmonsive.min.js" th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script src="static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js" th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script src="static/plugins/datatables-buttons/js/dataTables.buttons.min.js" th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script src="static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js" th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script src="static/plugins/jszip/jszip.min.js" th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script src="static/plugins/pdfmake/pdfmake.min.js" th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script src="static/plugins/pdfmake/vfs_fonts.js" th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script src="static/plugins/datatables-buttons/js/buttons.html5.min.js" th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script src="static/plugins/datatables-buttons/js/buttons.print.min.js" th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script src="static/plugins/datatables-buttons/js/buttons.colVis.min.js" th:src="@{/plugins/datatables-buttons/js/buttons.colVis.min.js}"></script>
+	<!-- dropzonejs -->
+	<script src="static/plugins/dropzone/min/dropzone.min.js" th:src="@{/plugins/dropzone/min/dropzone.min.js}"></script>	
+	
+	<script>
+		$('.datepicker').datepicker({
+		    format: "dd/mm/yyyy",
+		    weekStart: 1,
+		    maxViewMode: 0,
+		    todayBtn: true,
+		    language: "fr",
+		    //multidate: true,
+		    daysOfWeekHighlighted: "0,6",
+		    autoclose: true,
+		    autocomplete:false,
+		    todayHighlight: true,
+		    beforeShowDay: function(date){
+		          if (date.getMonth() > (new Date()).getMonth()) 
+		            switch (date.getDate()){
+		              /*
+		              case 4:
+		                return {
+		                  tooltip: 'Example tooltip',
+		                  classes: 'active'
+		                }; 
+		              case 8:
+		                return true;
+		              case 12:
+		                return "green";//*/
+		          }
+		        }
+		});
+		$(function () {
+		  $('[data-toggle="tooltip"]').tooltip();
+		  
+		  $("#dataTable").DataTable({
+		      "responsive": false, 
+		      "lengthChange": true, 
+		      "autoWidth": true,
+		      "bPaginate": false,
+		      "language": {
+		          "search": "_INPUT_",
+		          "searchPlaceholder": "Search/recherche ...",
+		          "columnVisibility":"Visibilite"
+		      },
+		      
+		      "info": false,
+		      "sAutoWidth": true,
+		      "bProcessing": true,
+		      "bDestroy":true,
+		      initComplete:function(){
+		      	$(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete','off');
+		      },
+		      "buttons": ["excel", "print", {
+	              "extend": 'colvis',
+	              "text": "Columns/Colonne",
+	              "postfixButtons": [ {
+	            	  "extend":"colvisRestore",
+	            	  "text":"TOUT AFF./ALLDISP."
+	              } ],
+	              "className": "btn btn-xs btn-brand dropdown-toggle", 
+	              "dataToggle": "dropdown", 
+	              "ariaExpanded": "true"
+	          }]
+		      
+		    }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+		    $('#example2').DataTable({
+		      "paging": true,
+		      "lengthChange": false,
+		      "searching": false,
+		      "ordering": true,
+		      "info": true,
+		      "autoWidth": false,
+		      "responsive": true,
+		    });
+		  
+		})
+		//window.addEventListener("load", window.print());
+		$('.select2').select2()
+	</script>
+	
+	</body>
+</html>

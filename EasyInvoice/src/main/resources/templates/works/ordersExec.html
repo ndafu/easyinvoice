@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{ordersexec_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{ordersexec_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" 
+							data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+						</div>
+					</div>
+					
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+						
+							<div class="card-header">
+								
+								
+							</div>
+							<fieldset style="border: 0px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+
+								<table class="table table-hover table-sm">
+									<thead>
+										<tr>
+											<td colspan="2"><strong th:text="#{exec_nature}"></strong></td>
+											<td><strong th:text="#{exec_client}"></strong></td>
+											<td><strong th:text="#{exec_currency}"></strong></td>
+											<td><strong th:text="#{exec_created_date}"></strong></td>
+											<td><strong th:text="#{exec_amount}"></strong></td>
+											<td><strong th:text="#{exec_vat}"></strong></td>
+											<td><strong th:text="#{exec_total}"></strong></td>
+										</tr>
+									</thead>
+                  					<tbody>
+                    					<div th:each ="wo:${works}">
+	                    					<tr data-widget="expandable-table" aria-expanded="false">
+	                    						<td style="border-bottom: 1px solid green; width: 8px;"><i class="expandable-table-caret fas fa-caret-right fa-fw"></i></td>
+	                    						<td style="border-bottom: 1px solid green;" ><strong th:text="${wo.nature}"></strong></td>
+												<td style="border-bottom: 1px solid green;" th:text ="${wo.client.name}"></td>
+												<td style="border-bottom: 1px solid green;" th:text ="${wo.currency}"></td>
+												<td style="border-bottom: 1px solid green;" th:text ="${#calendars.format(wo.createdDate, 'dd/MM/yyyy hh:mm:ss')}"></td>
+												<td style="border-bottom: 1px solid green; text-align: right;" th:text ="${#numbers.formatInteger(wo.subTotal,1,'WHITESPACE')}"></td>
+												<td style="border-bottom: 1px solid green; text-align: right;" th:text ="${#numbers.formatInteger(wo.totalVat,1,'WHITESPACE')}"></td>
+												<td style="border-bottom: 1px solid green; text-align: right;" th:text="${#numbers.formatInteger(wo.totalAmount,1,'WHITESPACE')}"></td>
+												<td style="border-bottom: 1px solid green;">
+													<button type="button" class="btn btn-sm btn-success addrubric" th:data-ref="${wo.id}">
+														<i class="fa fa-plus"> </i>
+													</button>
+												</td>
+	                    					</tr>
+	                    					<tr class="expandable-body">
+	                      						<td colspan="9">
+	                        						<div class="p-0">
+	                          							<table class="table table-hover table-sm">
+	                          								<tbody>
+	                            								<div th:each="it:${wo.rubrics}">
+		                              								<tr data-widget="expandable-table" aria-expanded="false">
+		                              									<td style="border-bottom: 0.5px solid red; width: 8px;"><i class="expandable-table-caret fas fa-caret-right fa-fw"></i></td>
+		                                								<td style="text-align: left; border-bottom: 0.5px solid red;"><strong>[[${it.name}]]</strong></td>
+		                                								<td style="text-align : right; border-bottom: 0.5px solid red;">
+																			<div class="btn-group">
+																				<button type="button" class="btn btn-success addwoitems" th:data-ref="${it.id}">
+																					<i class="fa fa-plus"> </i>
+																				</button>
+																				<button type="button" class="btn btn-warning editworubric" th:data-ref="${it.id}" th:data-name="${it.name}">
+																					<i class="fa fa-edit"> </i>
+																				</button>
+																				<button type="button" class="btn btn-sm btn-danger dirworubric" th:data-ref="${it.id}">
+																					<i class="fa fa-trash"> </i>
+																				</button>
+																			</div>
+																		</td>
+									                                </tr>
+									                                <tr class="expandable-body">
+									                                	<td colspan="3">
+									                                  		<div class="p-0">
+									                                    		<table class="table table-hover">
+									                                    			<thead>
+																						<tr style="background-color: rgb(223,223,223);">
+																							<td><strong></strong></td>
+																							<td><strong th:text="#{article}"></strong></td>
+																				  			<td><strong th:text="#{unity}"></strong></td>
+																				  			<td><strong th:text="#{quantity}"></strong></td>
+																				  			<td><strong th:text="#{unity_price}"></strong></td>
+																				  			<td><strong th:text="#{tax}"></strong></td>
+																				  			<td><strong th:text="#{taxAmount}"></strong></td>
+																				  			<td><strong th:text="#{amount}"></strong></td>
+																				  			<td><strong th:text="#{totalAmount}"></strong></td>
+																				  			<td>[+]</td>
+																						</tr>
+																					</thead>
+									                                     	 		<tbody>
+									                                        			<tr th:each="item:${it.items}">
+									                                        				<td></td>
+									                                        				<td th:text="${item.article}"></td>
+									                                          				<td th:text="${item.unity}"></td>
+									                                          				<td style=" text-align: right;" th:text="${#numbers.formatDecimal(item.quantity,1,'WHITESPACE',4,'COMMA')}"></td>
+									                                          				<td style=" text-align: right;" th:text="${#numbers.formatDecimal(item.unity_price,1,'WHITESPACE',2,'COMMA')}"></td>
+									                                          				<td style=" text-align: right;" th:text="${#numbers.formatDecimal(item.tax,1,'WHITESPACE',2,'COMMA')}"></td>
+									                                          				<td style=" text-align: right;" th:text="${#numbers.formatDecimal(item.tax_amount,1,'WHITESPACE',2,'COMMA')} "></td>
+									                                          				<td style=" text-align: right;" th:text="${#numbers.formatDecimal(item.art_total_nvat,1,'WHITESPACE',2,'COMMA')}"></td>
+									                                          				<td style=" text-align: right;" th:text="${#numbers.formatDecimal(item.art_total,1,'WHITESPACE',2,'COMMA')}"></td>
+									                                          				<td>
+																								<div class="btn-group">
+																									<button type="button" class="btn btn-warning editwoart" th:data-ref="${item.id}" th:data-article="${item.article}" th:data-unity="${item.unity}" th:data-qty="${item.quantity}" th:data-pu="${item.unity_price}" th:data-vatrate="${item.tax}" th:data-vatamnt="${item.tax_amount}" th:data-totalnvat="${item.art_total_nvat}" th:data-total="${item.art_total}">
+																										<i class="fa fa-edit"> </i>
+																									</button>
+																									<button type="button" class="btn btn-sm btn-danger dirwoart" th:data-ref="${item.id}">
+																										<i class="fa fa-trash"> </i>
+																									</button>
+																								</div>
+																							</td>
+									                                        			</tr>
+									                                      			</tbody>
+									                                    		</table>
+									                                  		</div>
+									                                	</td>
+									                              	</tr>
+								                              	</div>
+								                            </tbody>
+								                        </table>
+								                    </div>
+								                </td>
+								            </tr>
+							        	</div>
+							        </tbody>
+							    </table>
+							    <div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+									<div class="col-sm-3">
+										<h5><span class="badge badge-pill badge-info">[[${currentPage +' / '+totalpages}]]</span></h5>
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage > 1}" th:href="@{'/hospitalizationsheets/' + ${currentPage - 1}}"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+										<span th:unless="${currentPage > 1}"><i class="fa fa-arrow-left" aria-hidden="true"></i></span>&nbsp;&nbsp;
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage < totalpages}" th:href="@{'/hospitalizationsheets/' + ${currentPage + 1}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+										<span th:unless="${currentPage < totalpages}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>&nbsp;&nbsp;
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+				
+				<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="addRubrique" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="col-md-12">
+									<div class="card">
+										<div class="card-header">
+											<h3 class="card-title">
+												<i class="fa fa-book mr-1"></i> <strong>[[#{new_rubrique}]]</strong> 
+											</h3>
+											<div class="card-tools">	
+											</div>
+										</div>
+										<div class="card-body">
+											<div class="tab-content">
+												<fieldset>
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group input-group-sm">
+																<label for="rubrique_name" th:text="#{title_rubrique}"></label> 
+																<input type="hidden" id="woid"/>
+																<input autocomplete="off" type="text" class="form-control form-control-border" id="rubrique_name" th:placeholder="#{title_rubrique}" />
+															</div>
+														</div>
+													</div>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary" id="saveNewRubrique">[[#{btn_save}]]</button>
+								<button type="button" class="btn btn-danger" id="cancelsaveNewRubrique">[[#{btn_close}]]</button>
+							</div>
+		
+						</div>
+					</div>
+				</div>
+				
+				
+				<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="addItems" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="col-md-12">
+									<div class="card">
+										<div class="card-header">
+											<h3 class="card-title">
+												<i class="fa fa-book mr-1"></i> <strong>[[#{new_item}]]</strong> 
+											</h3>
+											<div class="card-tools">	
+											</div>
+										</div>
+										<div class="card-body">
+											<div class="tab-content">
+												<fieldset>
+													<div class="row">
+														
+														<div class="col-sm-12">
+															<div class="form-group input-group-sm">
+																<label for="quo_art" th:text="#{quo_art}"></label> 
+																<input type="hidden" id="exec_rub_id" />
+																<input type="text" class="form-control form-control-border" id="exec_article"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-2">
+															<div class="form-group input-group-sm">
+																<label for="exec_unity" th:text="#{exec_unity}"></label> 
+																<input type="text" class="form-control form-control-border" th:placeholder="#{exec_unity}" id="exec_unity"/>
+															</div>
+														</div>
+					
+														<div class="col-sm-2">
+															<div class="form-group input-group-sm">
+																<label for="quo_qte" th:text="#{quo_qte}"></label> 
+																<input type="number" class="form-control form-control-border" th:placeholder="#{inv_art_qte}" id="exec_quantity"/>
+															</div>
+														</div>
+	
+														
+														<div class="col-sm-3">
+															<div class="form-group input-group-sm">
+																<label for="exec_unity_price" th:text="#{quo_unity_price}"></label> 
+																<input type="number" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_unity_price}" id="exec_unity_price"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-2">
+															<div class="form-group input-group-sm">
+																<label for="exec_tax" th:text="#{quo_tax}"></label> 
+																<input style="text-align: right;" type="number" class="form-control form-control-border" th:placeholder="#{quo_tax}" id="exec_tax"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-3">
+															<div class="form-group input-group-sm">
+																<label for="exec_tax_amount">&nbsp;</label> 
+																<input style="text-align: right;" readonly="readonly" type="number" class="form-control form-control-border" th:placeholder="#{quo_tax_amnt}" id="exec_tax_amount"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-4">
+															<div class="form-group input-group-sm">
+																<label for="exec_art_total_nvat" th:text="#{quo_nvat_total}"></label> 
+																<input style="text-align: right;" type="number" readonly="readonly" class="form-control form-control-border" th:placeholder="#{quo_nvat_total}" id="exec_art_total_nvat"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-4">
+															<div class="form-group input-group-sm">
+																<label for="exec_art_total" th:text="#{quo_total}"></label> 
+																<input type="number" readonly="readonly" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_total}" id="exec_art_total"/>
+															</div>
+														</div>
+													</div>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary" id="saveNewItem">[[#{btn_save}]]</button>
+								<button type="button" class="btn btn-danger" id="cancelsaveNewItem">[[#{btn_close}]]</button>
+							</div>
+		
+						</div>
+					</div>
+				</div>
+				
+				<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="editRubrique" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="col-md-12">
+									<div class="card">
+										<div class="card-header">
+											<h3 class="card-title">
+												<i class="fa fa-book mr-1"></i> <strong>[[#{edit_rubrique}]]</strong> 
+											</h3>
+											<div class="card-tools">	
+											</div>
+										</div>
+										<div class="card-body">
+											<div class="tab-content">
+												<fieldset>
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group input-group-sm">
+																<label for="rubrique_old_name" th:text="#{old_title_rubrique}"></label> 
+																<input type="hidden" id="rubriqueid" />
+																<input readonly="readonly" autocomplete="off" type="text" class="form-control form-control-border" id="rubrique_old_name" th:placeholder="#{old_title_rubrique}" />
+															</div>
+														</div>
+														
+													</div>
+													
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group input-group-sm">
+																<label for="new_rubrique_name" th:text="#{new_title_rubrique}"></label> 
+																<input autocomplete="off" type="text" class="form-control form-control-border" id="new_rubrique_name" th:placeholder="#{new_title_rubrique}" />
+															</div>
+														</div>
+													</div>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary" id="saveRubrique">[[#{btn_save}]]</button>
+								<button type="button" class="btn btn-danger" id="cancelsaveRubrique">[[#{btn_close}]]</button>
+							</div>
+		
+						</div>
+					</div>
+				</div>
+				
+				
+				<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="editArticle" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="col-md-12">
+									<div class="card">
+										<div class="card-header">
+											<h3 class="card-title">
+												<i class="fa fa-book mr-1"></i> <strong>[[#{edit_article}]]</strong> 
+											</h3>
+											<div class="card-tools">	
+											</div>
+										</div>
+										<div class="card-body">
+											<div class="tab-content">
+												<fieldset>
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_article" th:text="#{quo_art}"></label> 
+																<input type="hidden" id="article_id" />
+																<input type="text" class="form-control form-control-border" id="ed_exec_article"/>
+															</div>
+														</div>
+														<div class="col-sm-2">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_unity" th:text="#{exec_unity}"></label> 
+																<input type="text" class="form-control form-control-border" th:placeholder="#{exec_unity}" id="ed_exec_unity"/>
+															</div>
+														</div>
+					
+														<div class="col-sm-2">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_quantity" th:text="#{quo_qte}"></label> 
+																<input type="number" class="form-control form-control-border" th:placeholder="#{inv_art_qte}" id="ed_exec_quantity"/>
+															</div>
+														</div>
+	
+														
+														<div class="col-sm-3">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_unity_price" th:text="#{quo_unity_price}"></label> 
+																<input type="number" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_unity_price}" id="ed_exec_unity_price"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-2">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_tax" th:text="#{quo_tax}"></label> 
+																<input style="text-align: right;" type="number" class="form-control form-control-border" th:placeholder="#{quo_tax}" id="ed_exec_tax"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-3">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_tax_amount">&nbsp;</label> 
+																<input style="text-align: right;" readonly="readonly" type="number" class="form-control form-control-border" th:placeholder="#{quo_tax_amnt}" id="ed_exec_tax_amount"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-4">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_art_total_nvat" th:text="#{quo_nvat_total}"></label> 
+																<input style="text-align: right;" type="number" readonly="readonly" class="form-control form-control-border" th:placeholder="#{quo_nvat_total}" id="ed_exec_art_total_nvat"/>
+															</div>
+														</div>
+														
+														<div class="col-sm-4">
+															<div class="form-group input-group-sm">
+																<label for="ed_exec_art_total" th:text="#{quo_total}"></label> 
+																<input type="number" readonly="readonly" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_total}" id="ed_exec_art_total"/>
+															</div>
+														</div>
+													</div>
+													
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary" id="saveedArticle">[[#{btn_save}]]</button>
+								<button type="button" class="btn btn-danger" id="cancelsaveedArticle">[[#{btn_close}]]</button>
+							</div>
+		
+						</div>
+					</div>
+				</div>
+				
+				
+				
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{user_man_page}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<h1 class="m-0 text-dark" th:text="#{user_man_page}"></h1>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+					
+					<div class="col-sm-1" sec:authorize="hasAnyRole('ROLE_ADMIN','COM_MANAGER','COM_HEAD_ADMIN','ROLE_COM_HR_OFF')">
+						<button type="button" class="btn btn-block btn-outline-success"  id="addusr">
+							<i class="fas fa-plus"></i>
+						</button>	
+					</div>
+	
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<div class="col-md-12">
+						<fieldset th:if="${size >0}"
+							style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+							<legend
+								style="font-size: 14px; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; background-color: RGB(0, 123, 255); color: white;">
+								<b th:text="#{users}"></b>
+							</legend>
+							<div class="table-responsive">
+								<table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+<!-- 												<td><strong>#</strong></td> -->
+												<td><strong th:text="#{name}"></strong></td>
+												<td><strong th:text="#{username}"></strong></td>
+												<td><strong th:text="#{phone}"></strong></td>
+												<td sec:authorize="hasAnyRole('ROLE_ADMIN')"><strong th:text="#{organization}"></strong></td>
+												<td><strong th:text="#{email}"></strong></td>
+												<td><strong th:text="#{user_status}"></strong></td>
+												<td><strong th:text="#{password_status}"></strong></td>
+												<td sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER')"><strong>+</strong></td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each ="us:${users}">
+<!-- 												<td th:text ="${us.id}"></td> -->
+												<td th:text ="${us.lastName +' '+us.firstName}"></td>
+												<td th:text ="${us.username}"></td>
+												<td th:text ="${us.telephone}"></td>
+												<td sec:authorize="hasAnyRole('ROLE_ADMIN')" th:text ="${us.organisationName}"></td>
+												<td th:text ="${us.email}"></td>
+												<td> 
+													<span th:if="${us.enabled} == true" th:text ="#{active}"></span>
+													<span th:unless="${us.enabled} == true" th:text ="#{no_active}"></span>
+												</td>
+												
+												<td> 
+													<span th:if="${us.tokenExpired} == true" th:text ="#{active}"></span>
+													<span th:unless="${us.tokenExpired} == true" th:text ="#{no_active}"></span>
+												</td>
+												
+												<td sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_COM_MANAGER')" style="width: 15px;">
+													<a class="btn btn-warning btn-sm edituser" th:data-ref="${us.id}"> 
+														<i class="fa fa-edit"> </i> 
+													</a>  
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+									<div class="col-sm-3">
+										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+									</div>
+									<div class="col-sm-1">
+										<span th:each="i: ${#numbers.sequence(1, totalpages)}">
+											<a th:if="${currentPage !=i}" th:href="@{'/users/' + ${i}}">[[${i}]]</a>
+											<span th:unless="${currentPage != i}">[[${i}]]</span>&nbsp;&nbsp;
+										</span>
+									</div>
+									<div class="col-sm-1">
+										<a th:if="${currentPage > 1}" th:href="@{'/users/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage < totalpages}" th:href="@{'/users/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+									</div>
+								</div>
+						</fieldset>
+					</div>
+					<!-- /.col-md-6 -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		
+		
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="adduser" aria-hidden="true">
+			  <div class="modal-dialog modal-lg">
+				    <div class="modal-content">
+				    	<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header p-2">
+									<ul class="nav nav-pills">
+										<li class="nav-item"><a class="nav-link active" href="#genPart" data-toggle="tab">[[#{user_gen}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">[[#{user_role}]]</a></li>
+									</ul>
+								</div>
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<!-- declaration part -->
+										<div class="active tab-pane" id="genPart">
+											
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name" th:text = "#{username}"></label>
+															<input type="text" class="form-control form-control-border" id="username" th:placeholder="#{username}"/>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name" th:text="#{name}"></label> 
+															<input type="text" class="form-control form-control-border" id="lst_name" th:placeholder="#{lst_name}"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name">&nbsp;</label>
+															<input type="text" class="form-control form-control-border" id="fst_name" th:placeholder="#{fst_name}"/>
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="name" th:text = "#{organization}"></label>
+															<select class="form-control form-control-border" id="organization" name="organisation" th:disabled="${organisation !=''}">
+																<option></option>
+																<option th:each="org:${organisations}" th:value="${org.id}" th:text="${org.name}" th:selected="${organisation}==${org.id}"></option>
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-5">
+														<div class="form-group">
+															<label for="name" th:text="#{email}"></label> 
+															<input type="text" class="form-control form-control-border" id="email" th:placeholder="#{email}"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name" th:text="#{password}"></label>
+															<input type="password" class="form-control form-control-border" id="password" th:placeholder="#{password}"/>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-5">
+														<div class="form-group">
+															<label for="name" th:text="#{phone}"></label> 
+															<input type="text" class="form-control form-control-border" id="phone" th:placeholder="#{phone}"/>
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+										<!-- declaration part : end -->
+										
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="roles">
+											<!-- The items -->
+											
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+														
+															<div class="icheck-success d-inline">
+		                       	 								<input type="checkbox" checked="checked" id="userstatus" value="userstatus">
+		                        								<label for="userstatus" th:text = "#{user_status_act}"></label>
+		                      								</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group">
+															<div class="icheck-success d-inline">
+		                       	 								<input type="checkbox" checked="checked" id="passwordstatus" value="passstatus">
+		                        								<label for="passwordstatus" th:text = "#{password_status_act}"></label>
+		                      								</div>
+														</div>
+													</div>
+												</div>
+											</fieldset>
+											
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 3px; margin-left: 0px; background-color: white;">
+												<legend style="font-size:small; margin: 2px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 5px; color: black ;">
+													<b th:text="#{roles}"></b>
+												</legend>
+															
+												<div class="row">
+													<div class="col-sm-2">
+														<div class="form-group">
+															<div class="icheck-danger d-inline">
+							                        			<input type="checkbox" id="admin">
+							                        			<label for="admin" th:text ="#{admin}"></label>
+							                      			</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-10">
+														<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 2px; margin-left: 0px; background-color: white; margin-top:-2px;">
+															<legend style="font-size:small; margin: 2px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 5px; color: black ;">
+																<b th:text="#{organisation_roles}"></b>
+															</legend>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-warning d-inline">
+										                        			<input type="checkbox" id="com_manager">
+										                        			<label for="com_manager" th:text ="#{com_manager}"></label>
+										                      			</div>
+																	</div>
+																</div>
+																
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="com_head_admin">
+										                        			<label for="com_head_admin" th:text ="#{com_head_admin}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+															
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="com_head_fina">
+										                        			<label for="com_head_fina" th:text ="#{com_head_fina}"></label>
+										                      			</div>
+																	</div>
+																</div>
+																
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="com_log_officer">
+										                        			<label for="com_log_officer" th:text ="#{com_log_officer}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="com_hr_off">
+										                        			<label for="com_hr_off" th:text ="#{com_hr_off}"></label>
+										                      			</div>
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="com_cash">
+										                        			<label for="com_cash" th:text ="#{com_cash}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="com_account"/>
+										                        			<label for="com_account" th:text ="#{com_account}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+														</fieldset>
+													</div>
+													
+													
+												</div>
+											</fieldset>
+											<!-- The items : end -->
+										</div>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+								
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary" id="saveuser">[[#{btn_save}]]</button>
+							<button type="button" class="btn btn-danger" id="cancel_save">[[#{btn_close}]]</button>
+						</div>
+						
+				    </div>
+			  </div>
+		</div>
+		
+		
+		<!-- Edit user -->
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="edituser" aria-hidden="true" style="font-size: small;">
+			  <div class="modal-dialog modal-lg">
+				    <div class="modal-content">
+				    	<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header p-2">
+									<ul class="nav nav-pills">
+										<li class="nav-item"><a class="nav-link active" href="#editgenPart" data-toggle="tab">[[#{user_gen}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#editroles" data-toggle="tab">[[#{user_role}]]</a></li>
+									</ul>
+								</div>
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<!-- declaration part -->
+										<div class="active tab-pane" id="editgenPart">
+											
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name" th:text = "#{username}"></label>
+															<input type="hidden" id="ed_ref"/>
+															<input readonly="readonly" type="text" class="form-control form-control-sm form-control-border" style="font-size: small;" id="ed_username" th:placeholder="#{username}"/>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name" th:text="#{name}"></label> 
+															<input type="text" class="form-control form-control-sm form-control-border" style="font-size: small;" id="ed_lst_name" th:placeholder="#{lst_name}"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name">&nbsp;</label>
+															<input type="text" class="form-control form-control-sm form-control-border" style="font-size: small;" id="ed_fst_name" th:placeholder="#{fst_name}"/>
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="name" th:text = "#{organization}"></label>
+															<select class="form-control form-control-sm form-control-border" id="ed_organization" style="font-size: sm;">
+																<option></option>
+																<option th:each="org:${organisations}" th:value="${org.id}" th:text="${org.name}"></option>
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-5">
+														<div class="form-group">
+															<label for="name" th:text="#{email}"></label> 
+															<input type="text" class="form-control form-control-sm form-control-border" id="ed_email" style="font-size: small;" th:placeholder="#{email}"/>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="name" th:text="#{password}"></label>
+															<input type="password" id="ed_password" class="form-control form-control-sm form-control-border" style="font-size: small;" th:placeholder="#{password}"/>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-5">
+														<div class="form-group">
+															<label for="name" th:text="#{phone}"></label> 
+															<input type="text" class="form-control form-control-sm form-control-border" style="font-size: small;" id="ed_phone" th:placeholder="#{phone}"/>
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+										<!-- declaration part : end -->
+										
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="editroles">
+											<!-- The items -->
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 20px !important; margin: 10px; margin-left: 0px; background-color: white;">
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+														
+															<div class="icheck-success d-inline">
+		                       	 								<input type="checkbox" id="ed_userstatus" value="userstatus">
+		                        								<label for="ed_userstatus" th:text = "#{user_status_act}"></label>
+		                      								</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-4">
+														<div class="form-group">
+															<div class="icheck-success d-inline">
+		                       	 								<input type="checkbox" id="ed_passwordstatus" value="passstatus">
+		                        								<label for="ed_passwordstatus" th:text = "#{password_status_act}"></label>
+		                      								</div>
+														</div>
+													</div>
+												</div>
+											</fieldset>
+											
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 10px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 3px; margin-left: 0px; background-color: white;">
+												<div class="row">
+													<div class="col-sm-2" sec:authorize="hasAnyRole('ROLE_ADMIN')">
+														<div class="form-group">
+															<div class="icheck-danger d-inline">
+							                        			<input type="checkbox" id="ed_admin">
+							                        			<label for="ed_admin" th:text ="#{admin}"></label>
+							                      			</div>
+														</div>
+													</div>
+													
+													<div class="col-sm-10">
+														<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 2px; margin-left: 0px; background-color: white; margin-top:-2px;">
+															<legend style="font-size:small; margin: 2px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 5px; color: black ;">
+																<b th:text="#{organisation_roles}"></b>
+															</legend>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-warning d-inline">
+										                        			<input type="checkbox" id="ed_com_manager">
+										                        			<label for="ed_com_manager" th:text ="#{com_manager}"></label>
+										                      			</div>
+																	</div>
+																</div>
+																
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="ed_com_head_admin">
+										                        			<label for="ed_com_head_admin" th:text ="#{com_head_admin}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+															
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="ed_com_head_fina">
+										                        			<label for="ed_com_head_fina" th:text ="#{com_head_fina}"></label>
+										                      			</div>
+																	</div>
+																</div>
+																
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="ed_com_log_officer">
+										                        			<label for="ed_com_log_officer" th:text ="#{com_log_officer}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="ed_com_hr_off">
+										                        			<label for="ed_com_hr_off" th:text ="#{com_hr_off}"></label>
+										                      			</div>
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="ed_com_cash">
+										                        			<label for="ed_com_cash" th:text ="#{com_cash}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="icheck-success d-inline">
+										                        			<input type="checkbox" id="ed_com_account"/>
+										                        			<label for="ed_com_account" th:text ="#{com_account}"></label>
+										                      			</div>
+																	</div>
+																</div>
+															</div>
+														</fieldset>
+													</div>
+												</div>
+											</fieldset>
+											<!-- The items : end -->
+										</div>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+								
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary" id="btnedituser">[[#{btn_save}]]</button>
+							<button type="button" class="btn btn-danger" id="edit_cancel_save">[[#{btn_close}]]</button>
+						</div>
+						
+				    </div>
+			  </div>
+		</div>
+		<!-- End edit user -->
+	</div>
+</body>
+</html>

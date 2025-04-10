@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{quotations_management}]]</title>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{quotations_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+					</div>
+					<div class="col-sm-1">
+						<a href="./quotation" class="btn btn-block btn-outline-success" data-toggle="tooltip" data-placement="top" th:title="#{add_quotation}" id="addQuotationn">
+							<i class="fas fa-plus"></i>
+						</a>	
+					</div>
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+				
+
+				<div class="row" style="padding-top: 5px;">
+					<!-- Left col -->
+					<section class="col-lg-12 connectedSortable" id="quotation_list" style="font-size: small;">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-folder-open mr-1"></i> [[#{list_quotations}]]
+								</h3>
+							</div>
+							<!-- /.card-header -->
+							<fieldset style="border: 0px solid #ddd !important; xmin-width: 0; padding: 2px; position: relative; border-radius: 4px; padding-left: 2px !important;padding-right: 2px !important; margin: 4px; margin-left: 4px; margin-right: 4px; ">
+							<div id="test" class="table-responsive">
+								<table class="table table-bordered table-striped table-hover table-sm" id="dataTable" width="100%" cellspacing="0" style="padding-right: 2px !important; ">
+										<thead>
+											<tr>
+												<td><strong>#</strong></td>
+												<td><strong th:text="#{quo_client}"></strong></td>
+												<td><strong th:text="#{quo_date}"></strong></td>
+												<td><strong th:text="#{quo_vat_status}"></strong></td>
+												<td><strong th:text="#{quo_amount_nvat}"></strong></td>
+												<td><strong th:text="#{quo_amount_vat}"></strong></td>
+												<td><strong th:text="#{quo_amount_vatinc}"></strong></td>
+												<td><strong th:text="#{status}"></strong></td>
+												<td><strong>+</strong></td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each ="art:${quotations}" th:style="${art.status==1 ? 'background-color:rgb(202,241,201);':(art.status==0 ? 'background-color:rgb(253,181,170);' : 'background-color:rgb(31,220,149);')}" class="art_row" th:data-ref="${art.id}">
+												<td th:text ="${art.reference}"></td>
+												<td th:text ="${art.client.name}"></td>
+												<td th:text ="${#calendars.format(art.quotationDate, 'dd/MM/yyyy')}"></td>
+												<td>
+													<span th:if="${art.taxApplicable=='2'}" th:text ="#{taxable}"></span>
+													<span th:if="${art.taxApplicable=='1'}" th:text ="#{exempted}"></span>
+												</td>
+												<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.subTotal,3,'WHITESPACE',0,'COMMA')}"></td>
+												<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.totalTax,1,'WHITESPACE',0,'COMMA')}"></td>
+												<td style="text-align: right;" th:text ="${#numbers.formatDecimal(art.grandTotal,3,'WHITESPACE',0,'COMMA')}"></td>
+												
+												<td>
+													<span th:if="${art.status==1}" th:text ="#{generated}"></span>
+													<span th:if="${art.status==2}" th:text ="#{offer_accepted}"></span>
+													<span th:if="${art.status==0}" th:text ="#{cancelled}"></span>
+												</td>
+												
+												<td>
+													<div class="input-group-prepend">
+										                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+										                      	[[#{action}]]
+										                    </button>
+										                    <div class="dropdown-menu" style="margin-left=2px;">
+											                    <div class="btn-group">
+											                        <button type="button" class="btn btn-success btn-sm viewQuotation" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{view_quotation}" ><i class="fa fa-eye"> </i></button>
+											                        <!--<button th:if="${art.status==1}" sec:authorize="hasRole('ROLE_COM_MANAGER')" type="button" class="btn btn-sm btn-danger updateQuotation" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{edit_quotation}"><i class="fa fa-edit"> </i></button> -->
+											                        <button th:if="${art.status==1}" sec:authorize="hasRole('ROLE_COM_MANAGER')" type="button" class="btn btn-sm btn-warning deleteQuotation" th:data-ref="${art.id}" data-toggle="tooltip" data-placement="top" th:title="#{delete_quotation}"><i class="fa fa-trash"> </i></button>
+											                    </div>
+										                    </div>
+										             	</div>
+													</td>
+
+
+
+													
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="row col-sm-12 dataTables_paginate paging_simple_numbers">
+									<div class="col-sm-3">
+										<h5><span class="badge badge-pill badge-info">[[#{TOT}]] : [[${totalpages}]]</span></h5>
+									</div>
+
+									<div class="col-sm-1">
+										<a th:if="${currentPage > 1}" th:href="@{'/quotations/' + ${currentPage - 1}}">[[#{PREV}]]</a>
+										<span th:unless="${currentPage > 1}">[[#{PREV}]]</span>&nbsp;&nbsp;
+									</div>
+									
+									<div class="col-sm-1">
+										<a th:if="${currentPage < totalpages}" th:href="@{'/quotations/' + ${currentPage + 1}}">[[#{NEXT}]]</a>
+										<span th:unless="${currentPage < totalpages}">[[#{NEXT}]]</span>&nbsp;&nbsp;
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					
+					<section class="col-lg-7 connectedSortable" id="quotation_det" hidden="hidden" style="font-size: smaller;">
+						<!-- solid sales graph -->
+						
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">
+									<i class="fas fa-info-circle mr-1"></i> [[#{invoices_detail}]]
+								</h3>
+								<div class="card-tools">
+									<a th:href="@{/printQ}" target="_blank" type="button" class="btn bg-success btn-sm" id="quotation_print">
+										<i class="fas fa-print"></i>
+									</a>
+									<input type="hidden" id="quotation_id"/>
+								</div>
+							</div>
+							<table style="border-color: white; border: 0px;" class="table table-borderless" width="100%" cellspacing="0">
+								<tr>
+									<td colspan="2" style="text-align: center; width: 30%;">
+										<div class="form-group input-group-sm row" style="text-align: center;">
+					                    	<img style="padding-left: 5px;" alt="Logo" height="100px" id="quota_logo">
+					                  	</div>
+					                </td>
+									<td colspan="2" style="text-align: center; width: 40%;">
+										<span style="font: bold; font-size:medium; font-weight: bold; " id="org_name"></span><br/>
+										<span id="org_address_gen"></span><br/>
+										<span id="org_address_prov"></span><br>
+										<strong>[[#{pobox}]] : </strong><span id="org_pobox"></span><br>
+										<strong>[[#{com_telephone}]] : </strong><span id="org_telephone"></span>
+									</td>
+									<td colspan="2" style="text-align: right; width: 30%;">
+										<strong>[[#{tin}]] : </strong><span id="org_tin"></span><br/>
+										<strong>[[#{trade_num}]] : </strong><span id="org_trade_number"></span><br/>
+										<strong>[[#{com_fiscal_center}]] : </strong><span id="org_fiscal_center"></span><br/>
+										<strong>[[#{com_jur_form}]] : </strong><span id="org_juris_form"></span><br/>
+										<strong>[[#{vat_sub}]] : </strong><span id="org_isTva"></span><br/>
+										<strong>[[#{com_activity_sector}]] : </strong><span id="org_activity_secter"></span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="6">
+										<div>
+											<fieldset style=" font-family:fantasy; border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-25px;">
+												<h4 style="text-align: center;">FACTURE PROFORMA NUMERO : <span id="quot_ref"></span> DU <span id="quot_date"></span></h4>
+											</fieldset>
+										</div>
+									</td>
+								</tr>
+								
+								<tr>
+									<td colspan="4" style="padding-left: -25px;">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; margin-top:-20px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-25px;">
+											<legend style="font-size: medium; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; ">Adressée à</legend>
+											<span><strong>Nom et Prénom ou Raison sociale  </strong></span><span id="cli_raison" style="margin-left: 10px;"></span><br/>
+											<span><strong>NIF  </strong></span><span id="cli_NIF" style="margin-left: 175px;"></span><br/>
+											<span><strong>Résident à  </strong></span><span id="cli_adresse" style="margin-left: 137px;"></span><br/>
+											<span><strong>Assujetti à la TVA  </strong></span><span id="cli_isvatpayer" style="margin-left: 100px;"></span><br/>
+						                 </fieldset>
+									</td>
+									<td colspan="2">
+										<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; margin-top:-20px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-8px;margin-left:-25px;">
+											<span><strong>Monnaie : </strong></span><span id="quo_currency" style="margin-left: 5px;"></span><br/>
+											<span><strong>Info. TVA </strong></span><span id="quo_taxable" style="margin-left: 5px;"></span><br/>
+						                 	<div style="float: right;" id="qrcode"></div>
+						                 
+						                 </fieldset>
+						                 <fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; margin-top:-20px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:2px;margin-left:-25px;">
+											<img id="stamp" />
+						                 
+						                 </fieldset>
+									</td>
+								</tr>
+								
+							</table>
+								<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; margin-top:-20px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white; margin-top:-25px; " >
+									<legend style="font-size: medium; margin: 10px; font-weight: bold; margin-bottom: 0px; width: 35%; border: 1px solid #ddd; border-radius: 4px; padding: 5px 5px 5px 10px; ">Article(s)</legend>
+									<table id="quot_art" class="table table-bordered" width="95%" cellspacing="0" style="margin-left: 2px; margin-right: 20px;">
+										<thead>
+											<tr>
+												<td><strong>Qté</strong></td>
+												<td><strong>Article ou service</strong></td>
+												<td><strong>PU</strong></td>
+												<td><strong>TVA</strong></td>
+												<td><strong>PVHTVA</strong></td>
+												<td><strong>Valeur TVA</strong></td>
+												<td><strong>PVTVAC</strong></td>
+											</tr>
+										</thead>
+										<tbody id="quo_items_detail">
+												
+										</tbody>
+									</table>
+								</fieldset>
+							<!-- /.card-header -->
+						</div>
+
+
+					</section>
+					
+					
+					
+					
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+
+		
+		
+
+		
+
+
+		<!-- Edit user -->
+		<div class="modal fade bd-example-modal-lg" tabindex="-1"
+			role="dialog" id="editQuotation" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="col-md-12">
+							<div class="card" style="margin-left:-15px;margin-top: -15px;margin-right: -15px;">
+								<div class="card-header p-2">
+									<ul class="nav nav-pills">
+										<li class="nav-item"><a class="nav-link active" href="#genPart" data-toggle="tab">[[#{quot_gen}]]</a></li>
+										<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">[[#{quot_items}]]</a></li>
+									</ul>
+								</div>
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<!-- declaration part -->
+										<div class="active tab-pane" id="genPart" style="margin-left:-15px;margin-top: -15px;margin-right: -15px;">
+											<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 2px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 2px; margin-left: 4px; background-color: white;">
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group input-group-sm">
+															<label for="quo_client" th:text="#{quo_client}"></label> 
+															<select class="form-control form-control-border" id="quo_client">
+																<option></option>
+																<option th:each="cli:${clients}" th:value="${cli.id}" th:text="${cli.name}"></option>
+															</select>
+														</div>
+													</div>
+													
+													<div class="col-sm-6">
+														<div class="form-group input-group-sm">
+															<label for="quo_date" th:text="#{quo_date}"></label> 
+															<input readonly="readonly" type="text" class="form-control form-control-border datepicker" id="quo_date" th:placeholder="#{quo_date}" />
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group input-group-sm">
+															<label for="quo_address" th:text="#{quo_address}"></label> 
+															<textarea readonly="readonly" class="form-control form-control-border" rows="3" th:placeholder="#{quo_address}" id="quo_address"></textarea>
+														</div>
+													</div>
+													
+													<div class="col-sm-6">
+														<div class="form-group input-group-sm">
+															<label for="quo_destination" th:text="#{quo_destination}"></label> 
+															<textarea readonly="readonly" class="form-control form-control-border" rows="3" th:placeholder="#{quo_destination}" id="quo_destination"></textarea>
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-2">
+														<div class="form-group input-group-sm">
+															<label for="quo_taxe" th:text="#{quo_taxe}"></label> 
+															<select class="form-control form-control-border" id="quo_taxe" th:value="${tax_mod}">
+																<option></option>
+																<option value="1">[[#{vat_free}]]</option>
+																<option th:selected="${tax_mod}" value="2">[[#{vat_with}]]</option>
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group input-group-sm">
+															<label for="quo_taxe" th:text="#{currency}"></label> 
+															<select class="form-control form-control-border" id="quo_currency">
+																<option></option>
+																<option value="BIF">BIF</option>
+																<option value="USD">USD</option>
+																<option value="EUR">EUR</option>
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="form-group input-group-sm">
+															<div class="icheck-danger">
+										                        <input type="checkbox" checked="checked" id="checkboxDanger1">
+										                        <label for="checkboxDanger1">[[#{same_address}]]</label>
+									                      	</div>
+														</div>
+													</div>
+													
+													
+												</div>
+											</fieldset>
+											
+										</div>
+										<!-- declaration part : end -->
+										
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="roles">
+											<!-- The items -->
+											
+											
+												<div class="card" style="margin-left:-15px;margin-top: -15px;margin-right: -15px;">
+													<div class="card-header">
+														<div class="row">
+															<div class="col-sm-2">
+																<div class="form-group input-group-sm">
+																	<label for="quo_qte" th:text="#{quo_qte}"></label> 
+																	<input type="text" class="form-control form-control-border" th:placeholder="#{quo_qte}" id="quo_quantity"/>
+																</div>
+															</div>
+															
+															<div class="col-sm-6">
+																<div class="form-group input-group-sm">
+																	<label for="quo_art" th:text="#{quo_art}"></label> 
+																	<select class="form-control form-control-border" id="quo_art">
+																		<option></option>
+																		<option th:each="art:${articles}" th:text="${'['+art.id+']'+art.title}" th:value="${art.id}"></option>
+																	</select>
+																</div>
+															</div>
+															
+
+															
+															<div class="col-sm-2">
+																<div class="form-group input-group-sm">
+																	<label for="quo_unity_price" th:text="#{quo_unity_price}"></label> 
+																	<input type="text" class="form-control form-control-border" th:placeholder="#{quo_unity_price}" id="quo_unity_price"/>
+																</div>
+															</div>
+															
+															<div class="col-sm-2">
+																<div class="form-group input-group-sm">
+																	<label for="quo_tax" th:text="#{quo_tax}"></label> 
+																	<input style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_tax}" id="quo_art_tax"/>
+																</div>
+															</div>
+
+														</div>
+														<div class="row">
+															<div class="col-sm-2">
+																<div class="form-group input-group-sm">
+																	<label for="quo_tax">&nbsp;</label> 
+																	<input style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_tax_amnt}" id="quo_tax_amnt"/>
+																</div>
+															</div>
+															<div class="col-sm-4">
+																<div class="form-group input-group-sm">
+																	<label for="quo_art_total" th:text="#{quo_nvat_total}"></label> 
+																	<input style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_nvat_total}" id="quo_art_total"/>
+																</div>
+															</div>
+															<div class="col-sm-5">
+																<div class="form-group input-group-sm">
+																	<label for="quo_art_total" th:text="#{quo_vat_total}"></label> 
+																	<input style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_vat_total}" id="quo_art_vat_total"/>
+																</div>
+															</div>
+															
+															<div class="col-sm-1">
+																<div class="form-group input-group-sm">
+																	<label for="quo_art_total" text=""></label> 
+																	<button type="button" class="btn btn-block btn-outline-success" 
+																		data-toggle="tooltip" data-placement="top" th:title="#{add_article_quo}" id="add_article_quo">
+																		<i class="fa fa-plus"></i>
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.card-header --> 
+						<!-- 							 -->
+														<div class="table-responsive" style="margin:2px;">
+															<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+																<thead>
+																	<tr>
+																		<td><strong th:text="#{quo_qte}"></strong></td>
+																		<td><strong th:text="#{quo_art}"></strong></td>
+																		<td><strong th:text="#{quo_unity_price}"></strong></td>
+																		<td><strong th:text="#{quo_tax}"></strong></td>
+																		<td><strong th:text="#{quo_tot_nvat}"></strong></td>
+																		<td><strong th:text="#{quo_tax_amnt}"></strong></td>
+																		<td><strong th:text="#{quo_tot_wvat}"></strong></td>
+																		<td><strong>+</strong></td>
+																	</tr>
+																</thead>
+																<tbody id="quotation_detail">
+																	
+																</tbody>
+															</table>
+														</div>
+												</div>
+											<!-- The items : end -->
+										</div>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.nav-tabs-custom -->
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="edsaveQuotation">[[#{btn_save}]]</button>
+						<button type="button" class="btn btn-danger" id="edcancelQuotationsave">[[#{btn_close}]]</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End edit user -->
+	</div>
+	
+</body>
+</html>

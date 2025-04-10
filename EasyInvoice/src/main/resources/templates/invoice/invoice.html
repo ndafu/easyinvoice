@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+
+<head>
+<meta charset="UTF-8" />
+<title>[[#{invoice_management}]]</title>
+<style type="text/css">
+	input {
+		font-size: xx-small;
+	}
+</style>
+</head>
+<body>
+
+	<div class="content-wrapper" layout:fragment="content">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<strong><h1 class="m-0 text-dark" th:text="#{invoice_management}"></h1></strong>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<div class="content" style="font-size: smaller;">
+			<div class="container-fluid">
+				<nav class="navbar navbar-expand navbar-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-block btn-outline-primary" data-toggle="tooltip" 
+							data-placement="top" th:title="#{back}" onclick="goBack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>	
+						</div>
+						
+						<div class="col-sm-2">
+							<a th:href="@{invoices}" class="btn btn-block btn-outline-success" 
+								data-toggle="tooltip" data-placement="top" th:title="#{open_invoice}" id="open_invoices">
+								<i class="fas fa-folder-open"></i>
+							</a>	
+						</div>
+					</div>
+					
+					<div class="col-sm-2" id="dir_cli_save_btn" >
+						<button type="button" class="btn btn-block btn-outline-danger" data-toggle="tooltip" 
+						 	data-placement="top" th:title="#{save_invoice}" id="dir_save_invoice">
+							<i class="fa fa-save" aria-hidden="true"></i>
+						</button>	
+					</div>
+					<script>
+						function goBack() {
+							window.history.back();
+						}
+					</script>
+				</nav>
+				
+
+				<div class="row" style="padding-top: 5px;">				
+					<!-- Left col -->
+					<section class="col-lg-8 connectedSortable" id="select_typ">
+						<!-- Custom tabs (Charts with tabs)-->						
+						<div class="card" id="inv_order_direct" >
+              				<div class="card-body">
+                				<div class="tab-content">
+                  					<div class="active tab-pane" id="invoice">
+                    				<!-- Post -->
+					                    <div class="row">					                    	
+											<div class="col-sm-6">
+												<div class="form-group input-group-sm">
+													<label for="quo_client" th:text="#{quo_client}"></label> 
+													<input type="text" id="dir_cli_name" class="form-control form-control-border"/> 
+												</div>
+											</div>
+											<div class="col-sm-2">
+												<div class="form-group input-group-sm">
+													<label for="quo_date" th:text="#{com_telephone}"></label>
+													<input type="text" class="form-control form-control-border" id="dir_cli_telephone" /> 
+												</div>
+											</div>
+											<div class="col-sm-2">
+												<div class="form-group input-group-sm">
+													<label for="quo_date" th:text="#{cli_tin}"></label> 
+													<input type="text" class="form-control form-control-border" id="dir_cli_nif" /> 
+												</div>
+											</div>
+											<div class="col-sm-2">
+												<div class="form-group input-group-sm">
+													<label for="quo_date" th:text="#{cli_contact_person}"></label> 
+													<input type="text" class="form-control form-control-border" id="dir_cli_contact_persone" /> 
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group input-group-sm">
+													<label for="quo_date" th:text="#{quo_address}"></label> 
+													<input autocomplete="off" type="text" class="form-control form-control-border" id="dir_cli_addr" /> 
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group input-group-sm">
+													<label for="quo_date" th:text="#{contact_address}"></label> 
+													<input autocomplete="off" type="text" class="form-control form-control-border" id="dir_cli_province" th:placeholder="#{province}"/> 
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group input-group-sm">
+													<label for="quo_date">&nbsp;</label> 
+													<input type="text" class="form-control form-control-border" id="dir_cli_commune" th:placeholder="#{com_commune}"/> 
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group input-group-sm">
+													<label for="quo_date">&nbsp;</label> 
+													<input type="text" class="form-control form-control-border" id="dir_cli_district" th:placeholder="#{com_district}" /> 
+												</div>
+											</div>
+											
+										</div>
+								
+										<div class="row">
+											<div class="col-sm-2">
+												<div class="form-group input-group-sm">
+													<label for="quo_taxe" th:text="#{quo_taxe}"></label> 
+													<select class="form-control form-control-border" id="dir_quo_taxe" th:value="${tax_mod}">
+														<option></option>
+														<option value="1">[[#{vat_free}]]</option>
+														<option th:selected="${tax_mod}" value="2">[[#{vat_with}]]</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group input-group-sm">
+													<label for="quo_taxe" th:text="#{currency}"></label> 
+													<select class="form-control form-control-border" id="dir_quo_currency">
+														<option value="BIF">BIF</option>
+														<!--<option value="USD">USD</option>
+														<option value="EUR">EUR</option>-->
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group input-group-sm">
+													<label for="quo_taxe" th:text="#{inv_pyt_mod}"></label> 
+													<select class="form-control form-control-border" id="dir_inv_pyt_mod">
+														<option></option>
+														<option value="1" th:text="#{pyt_espece}"></option>
+														<option value="2" th:text="#{pyt_bank}"></option>
+														<option value="3" th:text="#{pyt_credit}"></option>
+														<option value="4" th:text="#{pyt_oth}"></option>
+													</select>
+												</div>
+											</div>
+										</div>
+                  					</div>
+                			</div>
+                			<!-- /.tab-content -->
+              			</div><!-- /.card-body -->
+            		</div>
+						
+					</section>
+					
+					<section class="col-lg-4 connectedSortable" id="total_section">
+						<div class="card">
+							<!-- /.card-header -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="form-group input-group-sm row">
+			                    	<label for="quo_sub_tot" class="col-sm-5 col-form-label" th:text="#{quo_sub_tot}"></label>
+			                    	<div class="col-sm-7 input-group-sm">
+			                      		<input type="text" class="form-control form-control-border" id="inv_sub_tot" th:placeholder="#{quo_sub_tot}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${sub}"/>
+			                    	</div>
+			                  	</div>
+			                  	<div class="form-group row">
+			                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_tax}"></label>
+			                    	<div class="col-sm-7 input-group-sm">
+			                      		<input type="text" class="form-control form-control-border" id="inv_tax" th:placeholder="#{quo_tax}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${tax}"/>
+			                    	</div>
+			                  	</div>
+			                  	<div class="form-group row">
+			                    	<label for="quo_tax" class="col-sm-5 col-form-label" th:text="#{quo_total}"></label>
+			                    	<div class="col-sm-7 input-group-sm"> 
+			                      		<input type="text" class="form-control form-control-border" id="inv_total" th:placeholder="#{quo_total}" style="font-size: small;text-align: right; font-weight: bold;" th:value="${total}"/>
+			                    	</div>
+			                  	</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group input-group-sm">
+											<label for="quo_comment" th:text="#{quo_comment}"></label> 
+											<textarea class="form-control form-control-border" rows="6" th:placeholder="#{quo_comment}" id="quo_comment" style="font-size: small;"></textarea>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<!-- Article direct invoice -->
+					
+					<section class="col-lg-12 connectedSortable" id="dir_inv_art_part">
+						<!-- Custom tabs (Charts with tabs)-->
+						<div class="card">
+							<div class="card-header">
+								<div class="row">
+									<div class="col-sm-2">
+										<div class="form-group input-group-sm">
+											<label for="quo_art" th:text="#{quo_art}"></label> 
+											<select class="form-control form-control-border" id="dir_inv_art_art">
+												<option></option>
+												<option th:each="art:${articles}" th:value="${art.id}" th:text="${art.title}"></option>
+											</select>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_qte" th:text="#{quo_qte}"></label> 
+											<input type="hidden" id="dir_inv_art_id">
+											<input type="text" class="form-control form-control-border" th:placeholder="#{inv_art_qte}" id="dir_inv_art_quantity"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_art" th:text="#{art_unity}"></label> 
+											<input type="text" class="form-control form-control-border" th:placeholder="#{art_unity}" id="quo_unity"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_unity_price" th:text="#{quo_unity_price}"></label> 
+											<input type="text" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_unity_price}" id="dir_inv_art_unity_price"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_tax" th:text="#{quo_tax}"></label> 
+											<input style="text-align: right;" type="text" class="form-control form-control-border" th:placeholder="#{quo_tax}" id="dir_inv_art_tax"/>
+											<input type="hidden" id="dir_inv_art_tax_confirm">
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_tax">&nbsp;</label> 
+											<input style="text-align: right;" readonly="readonly"  type="text" class="form-control form-control-border" th:placeholder="#{quo_tax_amnt}" id="dir_inv_tax_amnt"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-2">
+										<div class="form-group input-group-sm">
+											<label for="quo_art_total" th:text="#{quo_nvat_total}"></label> 
+											<input style="text-align: right;" readonly="readonly" type="text" class="form-control form-control-border" th:placeholder="#{quo_nvat_total}" id="dir_inv_nvat_total"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-2">
+										<div class="form-group input-group-sm">
+											<label for="quo_art_total" th:text="#{quo_total}"></label> 
+											<input type="number" readonly="readonly" style="text-align: right;" class="form-control form-control-border" th:placeholder="#{inv_art_total}" id="dir_inv_art_total"/>
+										</div>
+									</div>
+									
+									<div class="col-sm-1">
+										<div class="form-group input-group-sm">
+											<label for="quo_art_total" text=""></label> 
+											<button type="button" class="btn btn-block btn-outline-success" 
+												data-toggle="tooltip" data-placement="top" th:title="#{add_article_quo}" id="dir_add_article_inv_art">
+												<i class="fa fa-plus"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- /.card-header --> 
+<!-- 							 -->
+							<fieldset style="border: 1px solid #ddd !important; xmin-width: 0; padding: 4px; position: relative; border-radius: 4px; padding-left: 4px !important; margin: 4px; margin-left: 4px; background-color: white;">
+								<div class="table-responsive">
+									<table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<td><strong th:text="#{quo_qte}"></strong></td>
+												<td><strong th:text="#{quo_art}"></strong></td>
+												<td><strong th:text="#{art_unity}"></strong></td>
+												<td><strong th:text="#{quo_unity_price}"></strong></td>
+												<td><strong th:text="#{quo_tax}"></strong></td>
+												<td><strong th:text="#{quo_tot_nvat}"></strong></td>
+												<td><strong th:text="#{quo_tax_amnt}"></strong></td>
+												<td><strong th:text="#{quo_tot_wvat}"></strong></td>
+												<td><strong>+</strong></td>
+											</tr>
+										</thead>
+										<tbody id="dir_inv_art_detail">
+											
+										</tbody>
+									</table>
+								</div>
+							</fieldset>
+						</div>
+					</section>
+					
+					<!-- End Article direct invoice -->
+					
+					<!-- right col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+	</div>
+</body>
+</html>

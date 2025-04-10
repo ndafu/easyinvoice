@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template}">
+	<head>
+		<meta charset="UTF-8" />
+		<title>[[#{dashboard}]]</title>
+	</head>
+	<body>
+		<div class="content-wrapper" layout:fragment="content">
+		   <!-- Content Header (Page header) -->
+		   <div class="content-header">
+		     <div class="container-fluid">
+		       <div class="row mb-2">
+		         <div class="col-sm-6">
+		           <h1 class="m-0"><strong>[[#{dashboard}]]</strong></h1>
+		         </div><!-- /.col -->
+		         <div class="col-sm-6">
+<!-- 		           <ol class="breadcrumb float-sm-right"> -->
+<!-- 		             <li class="breadcrumb-item"><a href="#">Home</a></li> -->
+<!-- 		             <li class="breadcrumb-item active">[[#{dashboard}]]</li> -->
+<!-- 		           </ol> -->
+		         </div><!-- /.col -->
+		       </div><!-- /.row -->
+		     </div><!-- /.container-fluid -->
+		   </div>
+		   <!-- /.content-header -->
+		
+		   <!-- Main content -->
+		   <section class="content">
+		     <div class="container-fluid">
+		       <!-- Small boxes (Stat box) -->
+		       <div class="row">
+		       		<div class="col-12 col-sm-6 col-md-3">
+			            <div class="info-box">
+			              <span class="info-box-icon bg-info elevation-1"><i class="fa fa-book"></i></span>
+			
+			              <div class="info-box-content">
+			                <span class="info-box-text">[[#{articles}]]</span>
+			                <span class="info-box-number">
+			                	[[${articles}]]
+			                </span>
+			              </div>
+			              <!-- /.info-box-content -->
+			            </div>
+		            <!-- /.info-box -->
+		          </div>
+		          
+		          
+		          <div class="col-12 col-sm-6 col-md-3">
+		            <div class="info-box mb-3">
+		              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-down"></i></span>
+		
+		              <div class="info-box-content">
+		                <span class="info-box-text">[[#{orders}]]</span>
+		                <span class="info-box-number"><!--<small>BIF</small>-->
+		                 [[${#numbers.formatInteger(bons,3,'WHITESPACE')}]]</span>
+		              </div>
+		              <!-- /.info-box-content -->
+		            </div>
+		            <!-- /.info-box -->
+		          </div>
+		          
+		          
+		          <div class="col-12 col-sm-6 col-md-3">
+		            <div class="info-box mb-3">
+		              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+		
+		              <div class="info-box-content">
+		                <span class="info-box-text">[[#{invoices}]]</span>
+		                <span class="info-box-number">
+		                	<!--<small>BIF</small> -->
+		                	[[${#numbers.formatInteger(invoices,3,'WHITESPACE')}]]
+		                </span>
+		              </div>
+		              <!-- /.info-box-content -->
+		            </div>
+		            <!-- /.info-box -->
+		          </div>
+		          
+		          
+		          <div class="col-12 col-sm-6 col-md-3">
+		            <div class="info-box mb-3">
+		              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+		
+		              <div class="info-box-content">
+		                <span class="info-box-text">[[#{clients}]]</span>
+		                <span class="info-box-number">[[${#numbers.formatInteger(clients,3,'WHITESPACE')}]]</span>
+		              </div>
+		              <!-- /.info-box-content -->
+		            </div>
+		            <!-- /.info-box -->
+		          </div>
+		          
+		          
+		          
+		       </div>
+		       <!-- /.row -->
+		       <!-- Main row -->
+		       
+		       
+		       <div class="row">
+		          <div class="col-lg-6">
+		            <div class="card">
+		              <div class="card-header border-0">
+		                <div class="d-flex justify-content-between">
+		                  	<h3 class="card-title"><strong>[[#{bons_commandes}]]</strong></h3>
+<!-- 		                  <a href="javascript:void(0);">View Report</a> -->
+		                </div>
+		              </div>
+		              <div class="card-body">
+		                <div class="d-flex">
+		                  	<p class="d-flex flex-column">
+		                    	<span class="text-bold text-lg">
+		                    	<!-- <small>BIF</small> -->
+		                    		[[${#numbers.formatInteger(bons,3,'WHITESPACE')}]]
+		                    	</span>
+		                    	<span>[[#{orders}]]</span>
+		                 	</p>
+<!-- 		                  <p class="ml-auto d-flex flex-column text-right"> -->
+<!-- 		                    <span class="text-success"> -->
+<!-- 		                      <i class="fas fa-arrow-up"></i> 12.5% -->
+<!-- 		                    </span> -->
+<!-- 		                    <span class="text-muted">Since last week</span> -->
+<!-- 		                  </p> -->
+		                </div>
+		                <!-- /.d-flex -->
+		
+		                <div class="position-relative mb-4">
+		                  <canvas id="visitors-chart" height="200"></canvas>
+		                </div>
+						<!--  -->
+		                <div class="d-flex flex-row justify-content-end">
+<!-- 		                  <span class="mr-2"> -->
+<!-- 		                    <i class="fas fa-square text-success"></i> [[#{sales}]] -->
+<!-- 		                  </span> -->
+<!-- 		                  <span> -->
+<!-- 		                    <i class="fas fa-square text-danger"></i> [[#{expenses}]] -->
+<!-- 		                  </span> -->
+		                </div>
+		              </div>
+		            </div>
+		            <!-- /.card -->
+		
+		            
+		            <!-- /.card -->
+		          </div>
+		          
+		          <!-- /.col-md-6 -->
+		          <div class="col-lg-6">
+		            <div class="card">
+		              <div class="card-header border-0">
+		                <div class="d-flex justify-content-between">
+		                  <h3 class="card-title"><strong>[[#{invoices_ev}]]</strong></h3>
+<!-- 		                  <a href="javascript:void(0);">View Report</a> -->
+		                </div>
+		              </div>
+		              <div class="card-body">
+		                <div class="d-flex">
+		                  	<p class="d-flex flex-column">
+		                    	<span class="text-bold text-lg">
+		                    		<!--<small>BIF</small>-->
+		                    		[[${#numbers.formatInteger(invoices,3,'WHITESPACE')}]]
+		                    	</span>
+		                    	<span>[[#{invoices}]]</span>
+		                  	</p>
+		                  	<p class="ml-auto d-flex flex-column text-right">
+<!-- 		                    <span class="text-success"> -->
+<!-- 		                      <i class="fas fa-arrow-up"></i> 33.1% -->
+<!-- 		                    </span> -->
+<!-- 		                    <span class="text-muted">Since last month</span> -->
+		                  	</p>
+		                </div>
+		                <!-- /.d-flex -->
+		
+		                <div class="position-relative mb-4">
+		                  <canvas id="sales-chart" height="200"></canvas>
+		                </div>
+		
+		                <div class="d-flex flex-row justify-content-end">
+<!-- 		                  <span class="mr-2"> -->
+<!-- 		                    <i class="fas fa-square text-primary"></i> This year -->
+<!-- 		                  </span> -->
+		
+<!-- 		                  <span> -->
+<!-- 		                    <i class="fas fa-square text-gray"></i> Last year -->
+<!-- 		                  </span> -->
+		                </div>
+		              </div>
+		            </div>
+		            <!-- /.card -->
+		          </div>
+		          <!-- /.col-md-6 -->
+		        </div>
+		       
+		       <!-- /.row (main row) -->
+		     </div><!-- /.container-fluid -->
+		   </section>
+		   <!-- /.content -->
+		 </div>
+	</body>
+</html>
